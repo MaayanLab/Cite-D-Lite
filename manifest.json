@@ -1,0 +1,28 @@
+{
+	"name": "GEO DataSet Data Citation Generator",
+	"version": "1.0",
+	"description": "This extension creates citations for a GEO DataSets.",
+	"icons":{
+		"128": "icon_128.png"
+	},
+	"browser_action": {
+		"default_icon": "icon_128.png"
+	},
+	"permissions": [
+		"downloads"
+	],
+	"content_scripts": [
+		{
+			"matches": [
+				"http://www.ncbi.nlm.nih.gov/*"
+			],
+			// "css": [
+				// "button.css"
+			// ],
+			"js": [
+				"jquery.js","main.js"
+			]
+		}
+	],
+	"manifest_version": 2
+}
