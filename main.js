@@ -73,7 +73,12 @@ function isSeries($object) {
 
 // Return true if user is on search results page, false otherwise.
 function isSearchResultsPage() {
-	return Boolean(window.location.pathname.match(/\/gds\//) && window.location.search.match(/\?term=/));
+	if (Boolean(window.location.pathname.match(/\/gds\//) && window.location.search.match(/\?term=/))) {
+		return true;
+	}
+	else if (document.getElementsByClassName('res_name').length) {
+		return true;
+	}
 }
 
 // Return true if user is on GDS browser page, false otherwise.
