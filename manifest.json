@@ -1,7 +1,7 @@
 {
-	"name": "GEO DataSet Data Citation Generator",
+	"name": "Citation Generator",
 	"version": "1.0",
-	"description": "This extension creates citations for a GEO DataSets.",
+	"description": "This extension creates citations for GEO datasets, PubMed articles, and DataMed bioCADDIE PDB datasets.",
 	"icons":{
 		"128": "icon_128.png"
 	},
@@ -14,10 +14,12 @@
 	"content_scripts": [
 		{
 			"matches": [
-				"http://www.ncbi.nlm.nih.gov/*"
+				"http://www.ncbi.nlm.nih.gov/*",
+				"http://www.ncbi.nlm.nih.gov/pubmed*",
+				"https://datamed.org/*"
 			],
 			// "css": [
-				// "button.css"
+			// 	"button.css"
 			// ],
 			"js": [
 				"jquery.js","main.js"

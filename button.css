@@ -17,10 +17,21 @@
   box-shadow: 0px 0px 1px #777;
 }*/
 
-#clickhere {
+/*#clickhere {
     text-decoration: underline;
     cursor: pointer;
     margin-right: 15px;
     color: #6666AA;
     white-space: nowrap;
+}*/
+
+.citationbutton {
+    background-color: #fdff00; /* yellow*/
+    border: black;
+    color: black;
+    padding: 2px 2px;
+    text-align: center;
+    text-decoration: underline;
+    display: inline-block;
+    font-size: 12px;
 }
