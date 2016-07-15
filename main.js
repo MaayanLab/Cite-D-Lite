@@ -46,7 +46,7 @@ function loadInterface($parents) {
 
 function addButtons($elem, iconURL, citationlabel) {
 	if (isGDSBrowserPage()) {
-		$elem.after('<div class="citationstuff"><img alt="Citation Icon" src="'+iconURL+'" width="22" height="22"><b class="citationlabel">'+citationlabel+'</b><button class="citationbutton" id="ris">RIS (.ris)</button><button class="citationbutton" id="bib">BibTeX (.bib)</button><button class="citationbutton" id="enw">EndNote (.enw)</button></div>');			
+		$elem.after('<div class="citationstuff"><img alt="Citation Icon" src="'+iconURL+'" width="15" height="15"><b class="citationlabel">'+citationlabel+'</b><button class="citationbutton" id="ris">RIS (.ris)</button><button class="citationbutton" id="bib">BibTeX (.bib)</button><button class="citationbutton" id="enw">EndNote (.enw)</button></div>');			
 	}
 	else {
 		$elem.append('<div class="citationstuff"><img alt="Citation Icon" src="'+iconURL+'" width="15" height="15"><b class="citationlabel">'+citationlabel+'</b><button class="citationbutton" id="ris">RIS (.ris)</button><button class="citationbutton" id="bib">BibTeX (.bib)</button><button class="citationbutton" id="enw">EndNote (.enw)</button></div>');			
@@ -151,7 +151,7 @@ function getID($evtTarget) {
 		var ID = $evtTarget.parent().parent().find('.rprtid').eq(1).find('dd').text();
 	}
 	else if (isGDSBrowserPage()) {
-		var ID = $evtTarget.parent().find('.caption').find('th').text().slice(39,43);
+		var ID = $evtTarget.parent().parent().find('.caption').find('th').text().slice(39,43);
 	}
 	return ID;
 }
@@ -162,7 +162,7 @@ function getSeries($evtTarget) {
 		var series = $evtTarget.parent().parent().find('.rprtid').eq(0).find('dd').text();
 	}
 	else if (isGSEPage()) {
-		var series = $evtTarget.parent().parent().parent().find('tr').eq(0).find('strong').attr('id');
+		var series = $evtTarget.parent().parent().parent().parent().find('tr').eq(0).find('strong').attr('id');
 	}
 	return series;
 }
@@ -170,10 +170,10 @@ function getSeries($evtTarget) {
 // Gets PubMedID of PubMed article (from search results or abstract page)
 function getPubMedID($evtTarget) {
 	if (isPubMedSearchResultsPage()) {
-		var PubMedID = $evtTarget.parent().find('dd').text();
+		var PubMedID = $evtTarget.parent().parent().find('dd').text();
 	}
 	else if (isPubMedAbstractPage()) {
-		var PubMedID = $evtTarget.parent().parent().parent().find('.resc').eq(0).find('dd').eq(0).text();
+		var PubMedID = $evtTarget.parent().parent().parent().find('dd').eq(0).text();
 	}
 	return PubMedID;
 }
@@ -216,7 +216,7 @@ function getIntoGSEPage(format, series, $evtTarget) {
 		success: function(data) {
 			var $data = $(data);
 			var title = getTitle($data, $evtTarget);
-			var modifiedTitle = 'GSE' + series + ': ' + title;
+			var modifiedTitle = series + ': ' + title;
 			var PubMedID = $data.find('.pubmed_id').attr('id');
 			var year = getYear($data, $evtTarget);
 			var ID = ''; // EMPTY
@@ -257,7 +257,6 @@ function getIntoAbstractPage(format, PubMedID, $evtTarget) {
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////// ALL THINGS RELATED TO GETTING INFO WITHIN AJAX CALL //////////
-// Gets title of publication (from GDS browser or GSE page)
 function getTitle($data, $evtTarget) {
 	if ((isDataSet($evtTarget)) || (isGDSBrowserPage())) {
 		var title = $data.find('tbody').eq(1).find('tr').eq(1).find('td').eq(0).text();
@@ -272,7 +271,6 @@ function getTitle($data, $evtTarget) {
 	return title;
 }
 
-// Gets authors of publication (from GDS browser or GSE page)
 function getAuthors($data, $evtTarget, PubMedID, searchURL, format, ID, series, modifiedTitle, year, journal, abstract, DOI) {
 	if ((isDataSet($evtTarget)) || (isGDSBrowserPage())) {
 		var authors = $data.find('.authors').text();
@@ -300,7 +298,7 @@ function getAuthors($data, $evtTarget, PubMedID, searchURL, format, ID, series, 
 				for (i=0;i<authorMatrix.length;i++) { // Insert comma between last & first name
 					authorMatrix[i] = authorMatrix[i].replace(' ',', ');
 				}
-				generateCitationAndDownload($evtTarget, searchURL, format, ID, series, modifiedTitle, authors, authorMatrix, year, journal, abstract, DOI);
+				generateCitationAndDownload($evtTarget, searchURL, format, ID, series, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
 			},
 			error: function () {
 				alert('Sorry, no citation available.')
@@ -320,7 +318,6 @@ function getAuthors($data, $evtTarget, PubMedID, searchURL, format, ID, series, 
 	}
 }
 
-// Gets year of publication (from GDS browser or GSE page)
 function getYear($data, $evtTarget) {
 	if ((isDataSet($evtTarget)) || (isGDSBrowserPage())) {
 		var year = $data.find('tbody').eq(1).find('tr').eq(7).find('td').eq(1).text().slice(0,4);
@@ -436,7 +433,7 @@ function makeBibTeXcitation($evtTarget, searchURL, ID, modifiedTitle, authorMatr
 	if ((isDataSet($evtTarget)) || (isGDSBrowserPage()) || (isSeries($evtTarget)) || (isGSEPage())) {
 	// If is related to citation for datasets or series
 		var citationbody = '@techreport{GDS' + ID + '_' + year + ',\n'; // What kind of "entry" type?
-		citationbody = citationbody + 'note = {National Center for Biotechnology Information, U.S. National Library of Medicine Gene Expression Omnibus (GEO) Datasets}\n';
+		citationbody = citationbody + 'note = {National Center for Biotechnology Information, U.S. National Library of Medicine Gene Expression Omnibus (GEO) Datasets},\n';
 	}
 	else if (isPubMed()) {
 	// Else if is related to citation for PubMed articles
