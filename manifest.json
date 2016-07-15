@@ -1,29 +1,38 @@
 {
-	"name": "Citation Generator",
+	"name": "Citation Generator & Article Summarizer",
 	"version": "1.0",
-	"description": "This extension creates citations for GEO datasets, PubMed articles, and DataMed bioCADDIE PDB datasets.",
+	"description": "This extension creates citations for GEO datasets and PubMed articles, as well as PubMed article summaries.",
+	
 	"icons":{
 		"128": "icon_128.png"
 	},
+	
 	"browser_action": {
 		"default_icon": "icon_128.png"
 	},
+	
 	"permissions": [
 		"downloads"
 	],
+	
 	"content_scripts": [
 		{
 			"matches": [
 				"http://www.ncbi.nlm.nih.gov/*",
 				"https://datamed.org/*"
 			],
-			// "css": [
-			// 	"button.css"
-			// ],
+			"css": [
+				"button.css"
+			],
 			"js": [
 				"jquery.js","main.js"
 			]
 		}
 	],
+	
+	"web_accessible_resources": [
+		"icon_128.png"
+	],
+
 	"manifest_version": 2
 }

@@ -1,19 +1,21 @@
 function main() {
-	if (isDatasetSearchResultsPage()) {
-		var $parents = $('.links.nohighlight');
-	}
-	else if (isGDSBrowserPage()) {
+	if (isGDSBrowserPage()) {
 		var $parents = $('.gds_panel');
 	}
 	else if (isGSEPage()) {
 		var $parents = $('.pubmed_id').parent();
 	}
-	else if (isPubMedSearchResultsPage()) {
-		var $parents = $('.rprtid');
+	else if (isDatasetSearchResultsPage()) {
+		// var $parents = $('.links.nohighlight');
+		var $parents = $('.rsltcont');
 	}
 	else if (isPubMedAbstractPage()) {
-		var $parents = $('.rprtid').eq(1);
-		debugger;
+		// var $parents = $('.rprtid').eq(1);
+		var $parents = $('.resc.status');
+	}
+	else if (isPubMedSearchResultsPage()) {
+		// var $parents = $('.rprtid');
+		var $parents = $('.resc');
 	}
 	loadInterface($parents);
 }
@@ -21,20 +23,37 @@ function main() {
 function loadInterface($parents) {
 	$parents.each(function(i, elem) {
 		var $elem = $(elem);
-		if ((isDataSet($elem)) || (isGDSBrowserPage())) {
-			$elem.append('<p></p>');
-			$elem.append('<b>Cite Dataset </b>');
+		var iconURL = chrome.extension.getURL("icon_128.png");
+		if (isDataSet($elem)) {
+			var citationlabel = 'Cite Dataset';
+			addButtons($elem, iconURL, citationlabel);
+		}
+		else if (isGDSBrowserPage()) {
+			var citationlabel = 'Cite Dataset';
+			addButtons($elem, iconURL, citationlabel);
 		}
 		else if ((isSeries($elem)) || (isGSEPage())) {
-			$elem.append('<p></p>');
-			$elem.append('<b>Cite Series </b>');
+			var citationlabel = 'Cite Series';
+			addButtons($elem, iconURL, citationlabel);
 		}
 		else if (isPubMed()) {
-			$elem.append('<p></p>');
-			$elem.append('<b>PubMed Citation </b>');	
+			var citationlabel = 'PubMed Citation';
+			addButtons($elem, iconURL, citationlabel);
 		}
-		addButtons($elem);
 	});
+	whenClicked();
+}
+
+function addButtons($elem, iconURL, citationlabel) {
+	if (isGDSBrowserPage()) {
+		$elem.after('<div class="citationstuff"><img alt="Citation Icon" src="'+iconURL+'" width="22" height="22"><b class="citationlabel">'+citationlabel+'</b><button class="citationbutton" id="ris">RIS (.ris)</button><button class="citationbutton" id="bib">BibTeX (.bib)</button><button class="citationbutton" id="enw">EndNote (.enw)</button></div>');			
+	}
+	else {
+		$elem.append('<div class="citationstuff"><img alt="Citation Icon" src="'+iconURL+'" width="15" height="15"><b class="citationlabel">'+citationlabel+'</b><button class="citationbutton" id="ris">RIS (.ris)</button><button class="citationbutton" id="bib">BibTeX (.bib)</button><button class="citationbutton" id="enw">EndNote (.enw)</button></div>');			
+	}
+}
+
+function whenClicked() {
 	$('.citationbutton').click(function(evt) {
 		evt.preventDefault();
 		var $evtTarget = $(evt.target);
@@ -56,12 +75,6 @@ function loadInterface($parents) {
 			getIntoAbstractPage(format, PubMedID, $evtTarget);
 		}
 	});
-}
-
-function addButtons($elem) {
-	$elem.append('<button class="citationbutton" id="ris">RIS (.ris)</button>');
-	$elem.append('<button class="citationbutton" id="bib">BibTeX (.bib)</button>');
-	$elem.append('<button class="citationbutton" id="enw">EndNote (.enw)</button>');
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////// ALL THINGS RELATED TO CHECKING TYPE OF PAGE //////////

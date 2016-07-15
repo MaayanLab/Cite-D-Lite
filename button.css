@@ -1,37 +1,27 @@
-/*#clickhere {
-  background-color: #bbb;
-  padding: .5em;
-  -moz-border-radius: 5px;
-  -webkit-border-radius: 5px;
-  border-radius: 6px;
-  color: #fff;
-  font-family: 'Oswald';
-  font-size: 20px;
-  text-decoration: none;
-  border: none;
-}*/
-
-/*#clickhere:hover {
-  border: none;
-  background: black;
-  box-shadow: 0px 0px 1px #777;
-}*/
-
-/*#clickhere {
-    text-decoration: underline;
-    cursor: pointer;
-    margin-right: 15px;
-    color: #6666AA;
-    white-space: nowrap;
-}*/
+.citationlabel {
+  color: black;
+  text-align: left;
+  text-transform: capitalize;
+  font-family: Arial;
+  font-size: 12px;
+  margin: 1px 1px;
+}
 
 .citationbutton {
-    background-color: #fdff00; /* yellow*/
-    border: black;
-    color: black;
-    padding: 2px 2px;
-    text-align: center;
-    text-decoration: underline;
-    display: inline-block;
-    font-size: 12px;
+  background-color: #e6e6e6;
+  border: 1px solid #e6e6e6;
+  color: black;
+  padding: 4px 8px;
+  text-align: center;
+  text-decoration: underline;
+  display: inline-block;
+  font-size: 12px;
+  border-radius: 4px;
+  margin: 4px 2px;
+  transition-duration: 0.4s;
+}
+
+.citationbutton:hover {
+  background-color: #cccccc;
+  border: 1px solid #cccccc;
 }
