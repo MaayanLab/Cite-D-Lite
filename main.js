@@ -15,7 +15,7 @@ function main() {
 	}
 	else if (isPubMedSearchResultsPage()) {
 		// var $parents = $('.rprtid');
-		var $parents = $('.resc');
+		var $parents = $('.aux');
 	}
 	loadInterface($parents);
 }
@@ -170,7 +170,7 @@ function getSeries($evtTarget) {
 // Gets PubMedID of PubMed article (from search results or abstract page)
 function getPubMedID($evtTarget) {
 	if (isPubMedSearchResultsPage()) {
-		var PubMedID = $evtTarget.parent().parent().find('dd').text();
+		var PubMedID = $evtTarget.parent().parent().find('dd').text()
 	}
 	else if (isPubMedAbstractPage()) {
 		var PubMedID = $evtTarget.parent().parent().parent().find('dd').eq(0).text();
@@ -399,7 +399,7 @@ function makeRIScitation($evtTarget, searchURL, ID, modifiedTitle, authorMatrix,
 		citationbody = citationbody + 'JO  - ' + journal + '\n';
 		citationbody = citationbody + 'AB  - ' + abstract +'\n';
 		citationbody = citationbody + 'DO  - ' + DOI +'\n';
-		citationbody = citationbody + 'url = http://dx.doi.org/' + DOI + '},\n';
+		citationbody = citationbody + 'UR  - http://dx.doi.org/' + DOI + '},\n';
 	}
 	citationbody = citationbody + 'TI  - ' + modifiedTitle + '\n';
 	citationbody = citationbody + 'PY  - ' + year + '\n';
