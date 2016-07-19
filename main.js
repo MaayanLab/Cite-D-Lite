@@ -432,7 +432,7 @@ function makeRIScitation($evtTarget, searchURL, ID, modifiedTitle, authorMatrix,
 function makeBibTeXcitation($evtTarget, searchURL, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI) {
 	if ((isDataSet($evtTarget)) || (isGDSBrowserPage()) || (isSeries($evtTarget)) || (isGSEPage())) {
 	// If is related to citation for datasets or series
-		var citationbody = '@techreport{GDS' + ID + '_' + year + ',\n'; // What kind of "entry" type?
+		var citationbody = '@techreport{' + authorMatrix[0].split(', ')[0] + '_' + year + ',\n'; // What kind of "entry" type?
 		citationbody = citationbody + 'note = {National Center for Biotechnology Information, U.S. National Library of Medicine Gene Expression Omnibus (GEO) Datasets},\n';
 	}
 	else if (isPubMed()) {

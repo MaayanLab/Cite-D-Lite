@@ -1,7 +1,7 @@
 {
-	"name": "Citation Generator & Article Summarizer",
+	"name": "Citation Generator & Article Highlighter",
 	"version": "1.0",
-	"description": "This extension creates citations for GEO datasets and PubMed articles, as well as PubMed article summaries.",
+	"description": "This extension creates citations for GEO datasets & PubMed articles and highlights PubMed abstracts.",
 	
 	"icons":{
 		"128": "icon_128.png"
@@ -18,8 +18,7 @@
 	"content_scripts": [
 		{
 			"matches": [
-				"http://www.ncbi.nlm.nih.gov/*",
-				"https://datamed.org/*"
+				"http://www.ncbi.nlm.nih.gov/*"
 			],
 			"css": [
 				"button.css"
