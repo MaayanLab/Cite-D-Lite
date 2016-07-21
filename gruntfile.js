@@ -3,7 +3,8 @@ module.exports = function(grunt) {
     var SRC = 'src/';
 
     var src_files = [
-        SRC + 'main.js'
+        SRC + 'main.js',
+        SRC + 'Citation.js'
     ];
 
     grunt.initConfig({
