@@ -40,11 +40,11 @@ function getIntoGDSBrowserPage(format, ID, $evtTarget) {
 		dataType: '',
 		success: function(data) {
 			var $data = $(data),
+				series = '', // EMPTY
 				title = ScreenScraper.getTitle($data, $evtTarget),
 				modifiedTitle = 'GDS' + ID + ': ' + title,
 				year = ScreenScraper.getYear($data, $evtTarget),
 				PubMedID = '', // EMPTY
-				series = '', // EMPTY
 				journal = '', // EMPTY
 				abstract = '', // EMPTY
 				DOI = '', // EMPTY
@@ -66,11 +66,11 @@ function getIntoGSEPage(format, series, $evtTarget) {
 		dataType: '',
 		success: function(data) {
 			var $data = $(data),
+				ID = '', // EMPTY
 				title = ScreenScraper.getTitle($data, $evtTarget),
 				modifiedTitle = series + ': ' + title,
-				PubMedID = $data.find('.pubmed_id').attr('id'),
 				year = ScreenScraper.getYear($data, $evtTarget),
-				ID = '', // EMPTY
+				PubMedID = $data.find('.pubmed_id').attr('id'),
 				journal = '', // EMPTY
 				abstract = '', // EMPTY
 				DOI = ''; // EMPTY
