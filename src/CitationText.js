@@ -1,4 +1,4 @@
-var Citation = {
+var CitationText = {
 	makeRIScitation: function($evtTarget, searchURL, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI) {
 		var citationbody;
 		if ((Type.isDataSet($evtTarget)) || (Page.isGDSBrowserPage()) || (Type.isSeries($evtTarget)) || (Page.isGSEPage())) {

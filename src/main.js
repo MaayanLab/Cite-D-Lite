@@ -158,34 +158,9 @@ function getAuthorMatrix($data, $evtTarget, PubMedID, searchURL, format, ID, ser
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////// ALL THINGS RELATED TO PUTTING THE CITATION TOGETHER //////////
 function generateCitationAndDownload($evtTarget, searchURL, format, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI) {
-	var filename = generateFileName(format, modifiedTitle),
-		citationbody = generateCitationBody($evtTarget, searchURL, format, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
+	var filename = CitationFile.fileName(format, modifiedTitle),
+		citationbody = CitationFile.citationBody($evtTarget, searchURL, format, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
 	download(filename, citationbody);
-}
-
-function generateFileName(format, modifiedTitle) {
-	var filename;
-	if (format == 'ris')
-		filename = modifiedTitle + '.ris';
-	else if (format == 'bib')
-		filename = modifiedTitle + '.bib';
-	else if (format == 'enw')
-		filename = modifiedTitle + '.enw';
-	return filename;
-}
-
-function generateCitationBody($evtTarget, searchURL, format, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI) {
-	var citationbody;
-	if (format == 'ris') {
-		citationbody = Citation.makeRIScitation($evtTarget, searchURL, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
-	}
-	else if (format == 'bib') {
-		citationbody = Citation.makeBibTeXcitation($evtTarget, searchURL, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
-	}
-	else if (format == 'enw') {
-		citationbody = Citation.makeEndNotecitation($evtTarget, searchURL, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
-	}
-	return citationbody;
 }
 
 // Downloads text file, bypasses server

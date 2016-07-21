@@ -8,7 +8,8 @@ module.exports = function(grunt) {
         SRC + 'Type.js',
         SRC + 'Interface.js',
         SRC + 'ScreenScraper.js',
-        SRC + 'Citation.js',
+        SRC + 'CitationFile.js',
+        SRC + 'CitationText.js',
         SRC + 'close.js'
     ];
 
