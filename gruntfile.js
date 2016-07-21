@@ -4,6 +4,7 @@ module.exports = function(grunt) {
 
     var src_files = [
         SRC + 'main.js',
+        SRC + 'Page.js',
         SRC + 'Citation.js'
     ];
 
