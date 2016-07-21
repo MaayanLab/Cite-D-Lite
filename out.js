@@ -20,51 +20,14 @@ function main() {
 }
 
 function addButtons($elem, iconURL, citationlabel) {
-	if (Page.isGDSBrowserPage()) {
-		$elem.after('<div class="citationstuff"><img alt="Citation Icon" src="'+iconURL+'" width="15" height="15"><b class="citationlabel">'+citationlabel+'</b><button class="citationbutton" id="ris">RIS (.ris)</button><button class="citationbutton" id="bib">BibTeX (.bib)</button><button class="citationbutton" id="enw">EndNote (.enw)</button></div>');			
+	if (Page.isGDSBrowserPage()) 
+{		$elem.after('<div class="citationstuff"><img alt="Citation Icon" src="'+iconURL+'" width="15" height="15"><b class="citationlabel">'+citationlabel+'</b><button class="citationbutton" id="ris">RIS (.ris)</button><button class="citationbutton" id="bib">BibTeX (.bib)</button><button class="citationbutton" id="enw">EndNote (.enw)</button></div>');			
 	}
 	else {
 		$elem.append('<div class="citationstuff"><img alt="Citation Icon" src="'+iconURL+'" width="15" height="15"><b class="citationlabel">'+citationlabel+'</b><button class="citationbutton" id="ris">RIS (.ris)</button><button class="citationbutton" id="bib">BibTeX (.bib)</button><button class="citationbutton" id="enw">EndNote (.enw)</button></div>');			
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////// ALL THINGS RELATED TO GETTING INFO IN ORDER TO IMPLEMENT AJAX CALL //////////
-// Gets ID number of dataset (from search results or GDS browser page)
-function getID($evtTarget) {
-	var ID;
-	if (Page.isDatasetSearchResultsPage()) {
-		ID = $evtTarget.parent().parent().find('.rprtid').eq(1).find('dd').text();
-	}
-	else if (Page.isGDSBrowserPage()) {
-		ID = $evtTarget.parent().parent().find('.caption').find('th').text().slice(39,43);
-	}
-	return ID;
-}
-
-// Gets series (from search results or GSE page)
-function getSeries($evtTarget) {
-	var series;
-	if (Page.isDatasetSearchResultsPage()) {
-		series = $evtTarget.parent().parent().find('.rprtid').eq(0).find('dd').text();
-	}
-	else if (Page.isGSEPage()) {
-		series = $evtTarget.parent().parent().parent().parent().find('tr').eq(0).find('strong').attr('id');
-	}
-	return series;
-}
-
-// Gets PubMedID of PubMed article (from search results or abstract page)
-function getPubMedID($evtTarget) {
-	var PubMedID;
-	if (Page.isPubMedSearchResultsPage()) {
-		PubMedID = $evtTarget.parent().parent().find('dd').text();
-	}
-	else if (Page.isPubMedAbstractPage()) {
-		PubMedID = $evtTarget.parent().parent().parent().find('dd').eq(0).text();
-	}
-	return PubMedID;
-}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////// ALL THINGS RELATED TO AJAX CALLS //////////
 // Gets citation info from GDS browser page
@@ -77,9 +40,9 @@ function getIntoGDSBrowserPage(format, ID, $evtTarget) {
 		dataType: '',
 		success: function(data) {
 			var $data = $(data),
-				title = getTitle($data, $evtTarget),
+				title = ScreenScraper.getTitle($data, $evtTarget),
 				modifiedTitle = 'GDS' + ID + ': ' + title,
-				year = getYear($data, $evtTarget),
+				year = ScreenScraper.getYear($data, $evtTarget),
 				PubMedID = '', // EMPTY
 				series = '', // EMPTY
 				journal = '', // EMPTY
@@ -103,10 +66,10 @@ function getIntoGSEPage(format, series, $evtTarget) {
 		dataType: '',
 		success: function(data) {
 			var $data = $(data),
-				title = getTitle($data, $evtTarget),
+				title = ScreenScraper.getTitle($data, $evtTarget),
 				modifiedTitle = series + ': ' + title,
 				PubMedID = $data.find('.pubmed_id').attr('id'),
-				year = getYear($data, $evtTarget),
+				year = ScreenScraper.getYear($data, $evtTarget),
 				ID = '', // EMPTY
 				journal = '', // EMPTY
 				abstract = '', // EMPTY
@@ -130,11 +93,11 @@ function getIntoAbstractPage(format, PubMedID, $evtTarget) {
 			var $data = $(data),
 				ID = '', // EMPTY
 				series = '', // EMPTY
-				journal = getJournal($data),
-				abstract = getAbstract($data),
-				DOI = getDOI($data),
-				modifiedTitle = getTitle($data, $evtTarget), // Title is only modified in the case of datasets & series
-				year = getYear($data, $evtTarget),
+				journal = ScreenScraper.getJournal($data),
+				abstract = ScreenScraper.getAbstract($data),
+				DOI = ScreenScraper.getDOI($data),
+				modifiedTitle = ScreenScraper.getTitle($data, $evtTarget), // Title is only modified in the case of datasets & series
+				year = ScreenScraper.getYear($data, $evtTarget),
 				authorMatrix = getAuthors($data, $evtTarget, PubMedID, searchURL, format, ID, series, modifiedTitle, year, journal, abstract, DOI);
 			generateCitationAndDownload($evtTarget, searchURL, format, ID, series, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
 		},
@@ -144,22 +107,6 @@ function getIntoAbstractPage(format, PubMedID, $evtTarget) {
 	});
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////// ALL THINGS RELATED TO GETTING INFO WITHIN AJAX CALL //////////
-function getTitle($data, $evtTarget) {
-	var title;
-	if ((Type.isDataSet($evtTarget)) || (Page.isGDSBrowserPage())) {
-		title = $data.find('tbody').eq(1).find('tr').eq(1).find('td').eq(0).text();
-	}
-	else if ((Type.isSeries($evtTarget)) || (Page.isGSEPage())) {
-		title = $data.find('tr').eq(19).find('td').eq(1).text();
-	}
-	else if (Page.isPubMed()) {
-		title = $data.find('.rprt.abstract').find('h1').text();
-		title = title.slice(0,title.length-1); // Get rid of extra space at end of string
-	}
-	return title;
-}
-
 function getAuthors($data, $evtTarget, PubMedID, searchURL, format, ID, series, modifiedTitle, year, journal, abstract, DOI) {
 	var authors,
 		authorMatrix;	
@@ -208,48 +155,8 @@ function getAuthors($data, $evtTarget, PubMedID, searchURL, format, ID, series, 
 		return authorMatrix;
 	}
 }
-
-function getYear($data, $evtTarget) {
-	var year;
-	if ((Type.isDataSet($evtTarget)) || (Page.isGDSBrowserPage())) {
-		year = $data.find('tbody').eq(1).find('tr').eq(7).find('td').eq(1).text().slice(0,4);
-	}
-	else if ((Type.isSeries($evtTarget)) || (Page.isGSEPage())) {
-		year = $data.find('tr').eq(18).find('td').eq(1).text().slice(18,22);
-	}
-	else if (Page.isPubMed()) {
-		var periodIndex = $data.find('.cit').text().indexOf('.');
-		year = $data.find('.cit').text().slice(periodIndex+2,periodIndex+6);
-	}
-	return year;
-}
-
-// Gets abbreviated journal title of PubMed article
-function getJournal($data) {
-	var periodIndex = $data.find('.cit').text().indexOf('.');
-	var journal = $data.find('.cit').text().slice(0,periodIndex);
-	return journal;
-}
-
-// Gets abstract of PubMed article
-function getAbstract($data) {
-	var abstract = $data.find('abstracttext').text();
-	return abstract;
-}
-
-// Gets abstract of PubMed article
-function getDOI($data) {
-	var DOI = $data.find('.rprtid').eq(0).find('dd').eq(1).text();
-	return DOI;
-}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////// ALL THINGS RELATED TO PUTTING THE CITATION TOGETHER //////////
-// Desired citation format of dataset
-function getCitationFormat($evtTarget) {
-	var format = $evtTarget.attr('id');
-	return format;
-}
-
 function generateCitationAndDownload($evtTarget, searchURL, format, ID, series, modifiedTitle, authorMatrix, year, journal, abstract, DOI) {
 	var filename = generateFileName(format, modifiedTitle),
 		citationbody = generateCitationBody($evtTarget, searchURL, format, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
@@ -392,24 +299,119 @@ var Interface = {
 		$('.citationbutton').click(function(evt) {
 			evt.preventDefault();
 			var $evtTarget = $(evt.target),
-				format = getCitationFormat($evtTarget);
+				format = ScreenScraper.getCitationFormat($evtTarget);
 			if ((Type.isDataSet($evtTarget)) || (Page.isGDSBrowserPage()) || (Type.isSeries($evtTarget)) || (Page.isGSEPage())) {
 				// If is related to citation for datasets or series
 				if ((Type.isDataSet($evtTarget)) || (Page.isGDSBrowserPage())) {
-					var ID = getID($evtTarget);
+					var ID = ScreenScraper.getID($evtTarget);
 					getIntoGDSBrowserPage(format, ID, $evtTarget);
 				}
 				else if ((Type.isSeries($evtTarget)) || (Page.isGSEPage())) {
-					var series = getSeries($evtTarget);
+					var series = ScreenScraper.getSeries($evtTarget);
 					getIntoGSEPage(format, series, $evtTarget);
 				}
 			}
 			else if (Page.isPubMed()) {
 				// Else if is related to citation for PubMed articles
-				var PubMedID = getPubMedID($evtTarget);
+				var PubMedID = ScreenScraper.getPubMedID($evtTarget);
 				getIntoAbstractPage(format, PubMedID, $evtTarget);
 			}
 		});
+	}
+};
+
+var ScreenScraper = {
+	// Desired citation format of dataset
+	getCitationFormat: function($evtTarget) {
+		var format = $evtTarget.attr('id');
+		return format;
+	},
+
+	////////// ALL THINGS RELATED TO GETTING INFO IN ORDER TO IMPLEMENT AJAX CALL //////////
+	// Gets ID number of dataset (from search results or GDS browser page)
+	getID: function($evtTarget) {
+		var ID;
+		if (Page.isDatasetSearchResultsPage()) {
+			ID = $evtTarget.parent().parent().find('.rprtid').eq(1).find('dd').text();
+		}
+		else if (Page.isGDSBrowserPage()) {
+			ID = $evtTarget.parent().parent().find('.caption').find('th').text().slice(39,43);
+		}
+		return ID;
+	},
+
+	// Gets series (from search results or GSE page)
+	getSeries: function($evtTarget) {
+		var series;
+		if (Page.isDatasetSearchResultsPage()) {
+			series = $evtTarget.parent().parent().find('.rprtid').eq(0).find('dd').text();
+		}
+		else if (Page.isGSEPage()) {
+			series = $evtTarget.parent().parent().parent().parent().find('tr').eq(0).find('strong').attr('id');
+		}
+		return series;
+	},
+
+	// Gets PubMedID of PubMed article (from search results or abstract page)
+	getPubMedID: function($evtTarget) {
+		var PubMedID;
+		if (Page.isPubMedSearchResultsPage()) {
+			PubMedID = $evtTarget.parent().parent().find('dd').text();
+		}
+		else if (Page.isPubMedAbstractPage()) {
+			PubMedID = $evtTarget.parent().parent().parent().find('dd').eq(0).text();
+		}
+		return PubMedID;
+	},
+
+	////////// ALL THINGS RELATED TO GETTING INFO WITHIN AJAX CALL //////////
+	getTitle: function($data, $evtTarget) {
+		var title;
+		if ((Type.isDataSet($evtTarget)) || (Page.isGDSBrowserPage())) {
+			title = $data.find('tbody').eq(1).find('tr').eq(1).find('td').eq(0).text();
+		}
+		else if ((Type.isSeries($evtTarget)) || (Page.isGSEPage())) {
+			title = $data.find('tr').eq(19).find('td').eq(1).text();
+		}
+		else if (Page.isPubMed()) {
+			title = $data.find('.rprt.abstract').find('h1').text();
+			title = title.slice(0,title.length-1); // Get rid of extra space at end of string
+		}
+		return title;
+	},
+
+	getYear: function($data, $evtTarget) {
+		var year;
+		if ((Type.isDataSet($evtTarget)) || (Page.isGDSBrowserPage())) {
+			year = $data.find('tbody').eq(1).find('tr').eq(7).find('td').eq(1).text().slice(0,4);
+		}
+		else if ((Type.isSeries($evtTarget)) || (Page.isGSEPage())) {
+			year = $data.find('tr').eq(18).find('td').eq(1).text().slice(18,22);
+		}
+		else if (Page.isPubMed()) {
+			var periodIndex = $data.find('.cit').text().indexOf('.');
+			year = $data.find('.cit').text().slice(periodIndex+2,periodIndex+6);
+		}
+		return year;
+	},
+
+	// Gets abbreviated journal title of PubMed article
+	getJournal: function($data) {
+		var periodIndex = $data.find('.cit').text().indexOf('.');
+		var journal = $data.find('.cit').text().slice(0,periodIndex);
+		return journal;
+	},
+
+	// Gets abstract of PubMed article
+	getAbstract: function($data) {
+		var abstract = $data.find('abstracttext').text();
+		return abstract;
+	},
+
+	// Gets abstract of PubMed article
+	getDOI: function($data) {
+		var DOI = $data.find('.rprtid').eq(0).find('dd').eq(1).text();
+		return DOI;
 	}
 };
 var Citation = {

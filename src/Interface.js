@@ -27,21 +27,21 @@ var Interface = {
 		$('.citationbutton').click(function(evt) {
 			evt.preventDefault();
 			var $evtTarget = $(evt.target),
-				format = getCitationFormat($evtTarget);
+				format = ScreenScraper.getCitationFormat($evtTarget);
 			if ((Type.isDataSet($evtTarget)) || (Page.isGDSBrowserPage()) || (Type.isSeries($evtTarget)) || (Page.isGSEPage())) {
 				// If is related to citation for datasets or series
 				if ((Type.isDataSet($evtTarget)) || (Page.isGDSBrowserPage())) {
-					var ID = getID($evtTarget);
+					var ID = ScreenScraper.getID($evtTarget);
 					getIntoGDSBrowserPage(format, ID, $evtTarget);
 				}
 				else if ((Type.isSeries($evtTarget)) || (Page.isGSEPage())) {
-					var series = getSeries($evtTarget);
+					var series = ScreenScraper.getSeries($evtTarget);
 					getIntoGSEPage(format, series, $evtTarget);
 				}
 			}
 			else if (Page.isPubMed()) {
 				// Else if is related to citation for PubMed articles
-				var PubMedID = getPubMedID($evtTarget);
+				var PubMedID = ScreenScraper.getPubMedID($evtTarget);
 				getIntoAbstractPage(format, PubMedID, $evtTarget);
 			}
 		});
