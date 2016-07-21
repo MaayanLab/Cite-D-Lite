@@ -1,25 +1,40 @@
 var Interface = {
+	locateParents: function() {
+		var $parents;
+		if (Page.isGDSBrowserPage()) {
+			$parents = $('.gds_panel');
+		}
+		else if (Page.isGSEPage()) {
+			$parents = $('.pubmed_id').parent();
+		}
+		else if (Page.isDatasetSearchResultsPage()) {
+			$parents = $('.rsltcont');
+		}
+		else if (Page.isPubMedAbstractPage()) {
+			$parents = $('.resc.status');
+		}
+		else if (Page.isPubMedSearchResultsPage()) {
+			$parents = $('.aux');
+		}
+		return $parents;
+	},
+
 	load: function($parents) {
+		var self = this;
 		$parents.each(function(i, elem) {
 			var $elem = $(elem),
 				iconURL = chrome.extension.getURL("icon_128.png"),
 				citationlabel;
-			if (Type.isDataSet($elem)) {
+			if ((Type.isDataSet($elem)) || (Page.isGDSBrowserPage())) {
 				citationlabel = 'Cite Dataset';
-				addButtons($elem, iconURL, citationlabel);
-			}
-			else if (Page.isGDSBrowserPage()) {
-				citationlabel = 'Cite Dataset';
-				addButtons($elem, iconURL, citationlabel);
 			}
 			else if ((Type.isSeries($elem)) || (Page.isGSEPage())) {
 				citationlabel = 'Cite Series';
-				addButtons($elem, iconURL, citationlabel);
 			}
 			else if (Page.isPubMed()) {
 				citationlabel = 'PubMed Citation';
-				addButtons($elem, iconURL, citationlabel);
 			}
+			self.addButtons($elem, iconURL, citationlabel);
 		});
 	},
 
@@ -45,5 +60,14 @@ var Interface = {
 				getIntoAbstractPage(format, PubMedID, $evtTarget);
 			}
 		});
+	},
+
+	addButtons: function($elem, iconURL, citationlabel) {
+		if (Page.isGDSBrowserPage()) {
+			$elem.after('<div class="citationstuff"><img alt="Citation Icon" src="'+iconURL+'" width="15" height="15"><b class="citationlabel">'+citationlabel+'</b><button class="citationbutton" id="ris">RIS (.ris)</button><button class="citationbutton" id="bib">BibTeX (.bib)</button><button class="citationbutton" id="enw">EndNote (.enw)</button></div>');			
+		}
+		else {
+			$elem.append('<div class="citationstuff"><img alt="Citation Icon" src="'+iconURL+'" width="15" height="15"><b class="citationlabel">'+citationlabel+'</b><button class="citationbutton" id="ris">RIS (.ris)</button><button class="citationbutton" id="bib">BibTeX (.bib)</button><button class="citationbutton" id="enw">EndNote (.enw)</button></div>');			
+		}
 	}
 };

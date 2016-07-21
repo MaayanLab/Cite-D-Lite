@@ -1,31 +1,7 @@
 function main() {
-	var $parents;
-	if (Page.isGDSBrowserPage()) {
-		$parents = $('.gds_panel');
-	}
-	else if (Page.isGSEPage()) {
-		$parents = $('.pubmed_id').parent();
-	}
-	else if (Page.isDatasetSearchResultsPage()) {
-		$parents = $('.rsltcont');
-	}
-	else if (Page.isPubMedAbstractPage()) {
-		$parents = $('.resc.status');
-	}
-	else if (Page.isPubMedSearchResultsPage()) {
-		$parents = $('.aux');
-	}
+	var $parents = Interface.locateParents();
 	Interface.load($parents);
 	Interface.whenClicked();
-}
-
-function addButtons($elem, iconURL, citationlabel) {
-	if (Page.isGDSBrowserPage()) 
-{		$elem.after('<div class="citationstuff"><img alt="Citation Icon" src="'+iconURL+'" width="15" height="15"><b class="citationlabel">'+citationlabel+'</b><button class="citationbutton" id="ris">RIS (.ris)</button><button class="citationbutton" id="bib">BibTeX (.bib)</button><button class="citationbutton" id="enw">EndNote (.enw)</button></div>');			
-	}
-	else {
-		$elem.append('<div class="citationstuff"><img alt="Citation Icon" src="'+iconURL+'" width="15" height="15"><b class="citationlabel">'+citationlabel+'</b><button class="citationbutton" id="ris">RIS (.ris)</button><button class="citationbutton" id="bib">BibTeX (.bib)</button><button class="citationbutton" id="enw">EndNote (.enw)</button></div>');			
-	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
