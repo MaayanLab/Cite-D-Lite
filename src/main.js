@@ -48,8 +48,8 @@ function getIntoGDSBrowserPage(format, ID, $evtTarget) {
 				journal = '', // EMPTY
 				abstract = '', // EMPTY
 				DOI = '', // EMPTY
-				authorMatrix = getAuthors($data, $evtTarget, PubMedID, searchURL, format, ID, series, modifiedTitle, year, journal, abstract, DOI);
-			generateCitationAndDownload($evtTarget, searchURL, format, ID, series, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
+				authorMatrix = getAuthorMatrix($data, $evtTarget, PubMedID, searchURL, format, ID, series, modifiedTitle, year, journal, abstract, DOI);
+			generateCitationAndDownload($evtTarget, searchURL, format, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
 		},
 		error: function() {
 			alert('Sorry, something went wrong.');
@@ -74,7 +74,7 @@ function getIntoGSEPage(format, series, $evtTarget) {
 				journal = '', // EMPTY
 				abstract = '', // EMPTY
 				DOI = ''; // EMPTY
-			getAuthors($data, $evtTarget, PubMedID, searchURL, format, ID, series, modifiedTitle, year, journal, abstract, DOI);
+			getAuthorMatrix($data, $evtTarget, PubMedID, searchURL, format, ID, series, modifiedTitle, year, journal, abstract, DOI);
 		},
 		error: function() {
 			alert('Sorry, something went wrong.');
@@ -98,8 +98,8 @@ function getIntoAbstractPage(format, PubMedID, $evtTarget) {
 				DOI = ScreenScraper.getDOI($data),
 				modifiedTitle = ScreenScraper.getTitle($data, $evtTarget), // Title is only modified in the case of datasets & series
 				year = ScreenScraper.getYear($data, $evtTarget),
-				authorMatrix = getAuthors($data, $evtTarget, PubMedID, searchURL, format, ID, series, modifiedTitle, year, journal, abstract, DOI);
-			generateCitationAndDownload($evtTarget, searchURL, format, ID, series, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
+				authorMatrix = getAuthorMatrix($data, $evtTarget, PubMedID, searchURL, format, ID, series, modifiedTitle, year, journal, abstract, DOI);
+			generateCitationAndDownload($evtTarget, searchURL, format, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
 		},
 		error: function() {
 			alert('Sorry, something went wrong.');
@@ -107,7 +107,7 @@ function getIntoAbstractPage(format, PubMedID, $evtTarget) {
 	});
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-function getAuthors($data, $evtTarget, PubMedID, searchURL, format, ID, series, modifiedTitle, year, journal, abstract, DOI) {
+function getAuthorMatrix($data, $evtTarget, PubMedID, searchURL, format, ID, series, modifiedTitle, year, journal, abstract, DOI) {
 	var authors,
 		authorMatrix;	
 	if ((Type.isDataSet($evtTarget)) || (Page.isGDSBrowserPage())) {
@@ -136,7 +136,7 @@ function getAuthors($data, $evtTarget, PubMedID, searchURL, format, ID, series, 
 				for (i=0;i<authorMatrix.length;i++) { // Insert comma between last & first name
 					authorMatrix[i] = authorMatrix[i].replace(' ',', ');
 				}
-				generateCitationAndDownload($evtTarget, searchURL, format, ID, series, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
+				generateCitationAndDownload($evtTarget, searchURL, format, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
 			},
 			error: function () {
 				alert('Sorry, no citation available.');
@@ -157,7 +157,7 @@ function getAuthors($data, $evtTarget, PubMedID, searchURL, format, ID, series, 
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////// ALL THINGS RELATED TO PUTTING THE CITATION TOGETHER //////////
-function generateCitationAndDownload($evtTarget, searchURL, format, ID, series, modifiedTitle, authorMatrix, year, journal, abstract, DOI) {
+function generateCitationAndDownload($evtTarget, searchURL, format, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI) {
 	var filename = generateFileName(format, modifiedTitle),
 		citationbody = generateCitationBody($evtTarget, searchURL, format, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
 	download(filename, citationbody);
