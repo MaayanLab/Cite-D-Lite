@@ -24,7 +24,7 @@
 				"button.css"
 			],
 			"js": [
-				"jquery.js","main.js"
+				"jquery.js","out.js"
 			]
 		}
 	],

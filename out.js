@@ -1,43 +1,42 @@
 function main() {
+	var $parents;
 	if (isGDSBrowserPage()) {
-		var $parents = $('.gds_panel');
+		$parents = $('.gds_panel');
 	}
 	else if (isGSEPage()) {
-		var $parents = $('.pubmed_id').parent();
+		$parents = $('.pubmed_id').parent();
 	}
 	else if (isDatasetSearchResultsPage()) {
-		// var $parents = $('.links.nohighlight');
-		var $parents = $('.rsltcont');
+		$parents = $('.rsltcont');
 	}
 	else if (isPubMedAbstractPage()) {
-		// var $parents = $('.rprtid').eq(1);
-		var $parents = $('.resc.status');
+		$parents = $('.resc.status');
 	}
 	else if (isPubMedSearchResultsPage()) {
-		// var $parents = $('.rprtid');
-		var $parents = $('.aux');
+		$parents = $('.aux');
 	}
 	loadInterface($parents);
 }
 
 function loadInterface($parents) {
 	$parents.each(function(i, elem) {
-		var $elem = $(elem);
-		var iconURL = chrome.extension.getURL("icon_128.png");
+		var $elem = $(elem),
+			iconURL = chrome.extension.getURL("icon_128.png"),
+			citationlabel;
 		if (isDataSet($elem)) {
-			var citationlabel = 'Cite Dataset';
+			citationlabel = 'Cite Dataset';
 			addButtons($elem, iconURL, citationlabel);
 		}
 		else if (isGDSBrowserPage()) {
-			var citationlabel = 'Cite Dataset';
+			citationlabel = 'Cite Dataset';
 			addButtons($elem, iconURL, citationlabel);
 		}
 		else if ((isSeries($elem)) || (isGSEPage())) {
-			var citationlabel = 'Cite Series';
+			citationlabel = 'Cite Series';
 			addButtons($elem, iconURL, citationlabel);
 		}
 		else if (isPubMed()) {
-			var citationlabel = 'PubMed Citation';
+			citationlabel = 'PubMed Citation';
 			addButtons($elem, iconURL, citationlabel);
 		}
 	});
@@ -56,8 +55,8 @@ function addButtons($elem, iconURL, citationlabel) {
 function whenClicked() {
 	$('.citationbutton').click(function(evt) {
 		evt.preventDefault();
-		var $evtTarget = $(evt.target);
-		var format = getCitationFormat($evtTarget);
+		var $evtTarget = $(evt.target),
+			format = getCitationFormat($evtTarget);
 		if ((isDataSet($evtTarget)) || (isGDSBrowserPage()) || (isSeries($evtTarget)) || (isGSEPage())) {
 			// If is related to citation for datasets or series
 			if ((isDataSet($evtTarget)) || (isGDSBrowserPage())) {
@@ -147,33 +146,36 @@ function isPubMedAbstractPage() {
 ////////// ALL THINGS RELATED TO GETTING INFO IN ORDER TO IMPLEMENT AJAX CALL //////////
 // Gets ID number of dataset (from search results or GDS browser page)
 function getID($evtTarget) {
+	var ID;
 	if (isDatasetSearchResultsPage()) {
-		var ID = $evtTarget.parent().parent().find('.rprtid').eq(1).find('dd').text();
+		ID = $evtTarget.parent().parent().find('.rprtid').eq(1).find('dd').text();
 	}
 	else if (isGDSBrowserPage()) {
-		var ID = $evtTarget.parent().parent().find('.caption').find('th').text().slice(39,43);
+		ID = $evtTarget.parent().parent().find('.caption').find('th').text().slice(39,43);
 	}
 	return ID;
 }
 
 // Gets series (from search results or GSE page)
 function getSeries($evtTarget) {
+	var series;
 	if (isDatasetSearchResultsPage()) {
-		var series = $evtTarget.parent().parent().find('.rprtid').eq(0).find('dd').text();
+		series = $evtTarget.parent().parent().find('.rprtid').eq(0).find('dd').text();
 	}
 	else if (isGSEPage()) {
-		var series = $evtTarget.parent().parent().parent().parent().find('tr').eq(0).find('strong').attr('id');
+		series = $evtTarget.parent().parent().parent().parent().find('tr').eq(0).find('strong').attr('id');
 	}
 	return series;
 }
 
 // Gets PubMedID of PubMed article (from search results or abstract page)
 function getPubMedID($evtTarget) {
+	var PubMedID;
 	if (isPubMedSearchResultsPage()) {
-		var PubMedID = $evtTarget.parent().parent().find('dd').text()
+		PubMedID = $evtTarget.parent().parent().find('dd').text();
 	}
 	else if (isPubMedAbstractPage()) {
-		var PubMedID = $evtTarget.parent().parent().parent().find('dd').eq(0).text();
+		PubMedID = $evtTarget.parent().parent().parent().find('dd').eq(0).text();
 	}
 	return PubMedID;
 }
@@ -181,23 +183,23 @@ function getPubMedID($evtTarget) {
 ////////// ALL THINGS RELATED TO AJAX CALLS //////////
 // Gets citation info from GDS browser page
 function getIntoGDSBrowserPage(format, ID, $evtTarget) {
-	var baseURL = 'http://www.ncbi.nlm.nih.gov/sites/GDSbrowser?acc=GDS';
-	var searchURL = baseURL + ID;
+	var baseURL = 'http://www.ncbi.nlm.nih.gov/sites/GDSbrowser?acc=GDS',
+		searchURL = baseURL + ID;
 	$.ajax({
 		url: searchURL,
 		type: 'GET',
 		dataType: '',
 		success: function(data) {
-			var $data = $(data);
-			var title = getTitle($data, $evtTarget);
-			var modifiedTitle = 'GDS' + ID + ': ' + title;
-			var year = getYear($data, $evtTarget);
-			var PubMedID = ''; // EMPTY
-			var series = ''; // EMPTY
-			var journal = ''; // EMPTY
-			var abstract = ''; // EMPTY
-			var DOI = ''; // EMPTY
-			var authorMatrix = getAuthors($data, $evtTarget, PubMedID, searchURL, format, ID, series, modifiedTitle, year, journal, abstract, DOI);
+			var $data = $(data),
+				title = getTitle($data, $evtTarget),
+				modifiedTitle = 'GDS' + ID + ': ' + title,
+				year = getYear($data, $evtTarget),
+				PubMedID = '', // EMPTY
+				series = '', // EMPTY
+				journal = '', // EMPTY
+				abstract = '', // EMPTY
+				DOI = '', // EMPTY
+				authorMatrix = getAuthors($data, $evtTarget, PubMedID, searchURL, format, ID, series, modifiedTitle, year, journal, abstract, DOI);
 			generateCitationAndDownload($evtTarget, searchURL, format, ID, series, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
 		},
 		error: function() {
@@ -207,22 +209,22 @@ function getIntoGDSBrowserPage(format, ID, $evtTarget) {
 }
 
 function getIntoGSEPage(format, series, $evtTarget) {
-	var baseURL = 'http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=';
-	var searchURL = baseURL + series;
+	var baseURL = 'http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=',
+		searchURL = baseURL + series;
 	$.ajax({
 		url: searchURL,
 		type: 'GET',
 		dataType: '',
 		success: function(data) {
-			var $data = $(data);
-			var title = getTitle($data, $evtTarget);
-			var modifiedTitle = series + ': ' + title;
-			var PubMedID = $data.find('.pubmed_id').attr('id');
-			var year = getYear($data, $evtTarget);
-			var ID = ''; // EMPTY
-			var journal = ''; // EMPTY
-			var abstract = ''; // EMPTY
-			var DOI = ''; // EMPTY
+			var $data = $(data),
+				title = getTitle($data, $evtTarget),
+				modifiedTitle = series + ': ' + title,
+				PubMedID = $data.find('.pubmed_id').attr('id'),
+				year = getYear($data, $evtTarget),
+				ID = '', // EMPTY
+				journal = '', // EMPTY
+				abstract = '', // EMPTY
+				DOI = ''; // EMPTY
 			getAuthors($data, $evtTarget, PubMedID, searchURL, format, ID, series, modifiedTitle, year, journal, abstract, DOI);
 		},
 		error: function() {
@@ -232,22 +234,22 @@ function getIntoGSEPage(format, series, $evtTarget) {
 }
 
 function getIntoAbstractPage(format, PubMedID, $evtTarget) {
-	var baseURL = 'http://www.ncbi.nlm.nih.gov/pubmed/';
-	var searchURL = baseURL + PubMedID;
+	var baseURL = 'http://www.ncbi.nlm.nih.gov/pubmed/',
+		searchURL = baseURL + PubMedID;
 	$.ajax({
 		url: searchURL,
 		type: 'GET',
 		dataType: '',
 		success: function(data) {
-			var $data = $(data);
-			var ID = ''; // EMPTY
-			var series = ''; // EMPTY
-			var journal = getJournal($data);
-			var abstract = getAbstract($data);
-			var DOI = getDOI($data);
-			var modifiedTitle = getTitle($data, $evtTarget); // Title is only modified in the case of datasets & series
-			var year = getYear($data, $evtTarget);
-			var authorMatrix = getAuthors($data, $evtTarget, PubMedID, searchURL, format, ID, series, modifiedTitle, year, journal, abstract, DOI);
+			var $data = $(data),
+				ID = '', // EMPTY
+				series = '', // EMPTY
+				journal = getJournal($data),
+				abstract = getAbstract($data),
+				DOI = getDOI($data),
+				modifiedTitle = getTitle($data, $evtTarget), // Title is only modified in the case of datasets & series
+				year = getYear($data, $evtTarget),
+				authorMatrix = getAuthors($data, $evtTarget, PubMedID, searchURL, format, ID, series, modifiedTitle, year, journal, abstract, DOI);
 			generateCitationAndDownload($evtTarget, searchURL, format, ID, series, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
 		},
 		error: function() {
@@ -258,58 +260,61 @@ function getIntoAbstractPage(format, PubMedID, $evtTarget) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////// ALL THINGS RELATED TO GETTING INFO WITHIN AJAX CALL //////////
 function getTitle($data, $evtTarget) {
+	var title;
 	if ((isDataSet($evtTarget)) || (isGDSBrowserPage())) {
-		var title = $data.find('tbody').eq(1).find('tr').eq(1).find('td').eq(0).text();
+		title = $data.find('tbody').eq(1).find('tr').eq(1).find('td').eq(0).text();
 	}
 	else if ((isSeries($evtTarget)) || (isGSEPage())) {
-		var title = $data.find('tr').eq(19).find('td').eq(1).text();
+		title = $data.find('tr').eq(19).find('td').eq(1).text();
 	}
 	else if (isPubMed()) {
-		var title = $data.find('.rprt.abstract').find('h1').text();
+		title = $data.find('.rprt.abstract').find('h1').text();
 		title = title.slice(0,title.length-1); // Get rid of extra space at end of string
 	}
 	return title;
 }
 
 function getAuthors($data, $evtTarget, PubMedID, searchURL, format, ID, series, modifiedTitle, year, journal, abstract, DOI) {
+	var authors,
+		authorMatrix;	
 	if ((isDataSet($evtTarget)) || (isGDSBrowserPage())) {
-		var authors = $data.find('.authors').text();
+		authors = $data.find('.authors').text();
 		authors = authors.slice(0,authors.length-2); // Get rid of extra space and punctuation at end of string
 		authors = authors.replace(/\s*,\s*/g, ','); // Get rid of spaces after commas
-		var authorMatrix = authors.split(","); // Divides string of authors into vector of authors
+		authorMatrix = authors.split(","); // Divides string of authors into vector of authors
 		for (i=0;i<authorMatrix.length;i++) { // Insert comma between last & first name
 			authorMatrix[i] = authorMatrix[i].replace(' ',', ');
 		}
 		return authorMatrix;
 	}
 	else if ((isSeries($evtTarget)) || (isGSEPage())) {
-		var pubmedBaseURL = 'http://www.ncbi.nlm.nih.gov/sites/PubmedCitation?id=';
-		var pubmedSearchURL = pubmedBaseURL + PubMedID;
+		var pubmedBaseURL = 'http://www.ncbi.nlm.nih.gov/sites/PubmedCitation?id=',
+			pubmedSearchURL = pubmedBaseURL + PubMedID;
 		$.ajax({
 			url: pubmedSearchURL,
 			type: 'GET',
 			dataType: '',
 			success: function(pubmedCitation) {
 				var $pubmedCitation = $(pubmedCitation);
-				var authors = $pubmedCitation.find('.authors').text();
+				authors = $pubmedCitation.find('.authors').text();
 				authors = authors.slice(0,authors.length-1); // Get rid of extra space at end of string
 				authors = authors.replace(/\s*,\s*/g, ','); // Get rid of spaces after commas
-				var authorMatrix = authors.split(","); // Divides string of authors into vector of authors
+				authorMatrix = authors.split(","); // Divides string of authors into vector of authors
 				for (i=0;i<authorMatrix.length;i++) { // Insert comma between last & first name
 					authorMatrix[i] = authorMatrix[i].replace(' ',', ');
 				}
 				generateCitationAndDownload($evtTarget, searchURL, format, ID, series, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
 			},
 			error: function () {
-				alert('Sorry, no citation available.')
+				alert('Sorry, no citation available.');
 			}
 		});
 	}
 	else if (isPubMed()) {
-		var authors = $data.find('.auths').text();
+		authors = $data.find('.auths').text();
 		authors = authors.slice(0,authors.length-1); // Get rid of punctuation at end of string
 		authors = authors.replace(/\s*,\s*/g, ','); // Get rid of spaces after commas
-		var authorMatrix = authors.split(","); // Divides string of authors into vector of authors
+		authorMatrix = authors.split(","); // Divides string of authors into vector of authors
 		for (i=0;i<authorMatrix.length;i++) {
 			authorMatrix[i] = authorMatrix[i].replace(' ',', '); // Insert comma between last & first name
 			authorMatrix[i] = authorMatrix[i].slice(0,authorMatrix[i].length-1); // Get rid of number after name
@@ -319,15 +324,16 @@ function getAuthors($data, $evtTarget, PubMedID, searchURL, format, ID, series, 
 }
 
 function getYear($data, $evtTarget) {
+	var year;
 	if ((isDataSet($evtTarget)) || (isGDSBrowserPage())) {
-		var year = $data.find('tbody').eq(1).find('tr').eq(7).find('td').eq(1).text().slice(0,4);
+		year = $data.find('tbody').eq(1).find('tr').eq(7).find('td').eq(1).text().slice(0,4);
 	}
 	else if ((isSeries($evtTarget)) || (isGSEPage())) {
-		var year = $data.find('tr').eq(18).find('td').eq(1).text().slice(18,22);
+		year = $data.find('tr').eq(18).find('td').eq(1).text().slice(18,22);
 	}
 	else if (isPubMed()) {
 		var periodIndex = $data.find('.cit').text().indexOf('.');
-		var year = $data.find('.cit').text().slice(periodIndex+2,periodIndex+6);
+		year = $data.find('.cit').text().slice(periodIndex+2,periodIndex+6);
 	}
 	return year;
 }
@@ -359,43 +365,46 @@ function getCitationFormat($evtTarget) {
 }
 
 function generateCitationAndDownload($evtTarget, searchURL, format, ID, series, modifiedTitle, authorMatrix, year, journal, abstract, DOI) {
-	var filename = generateFileName(format, modifiedTitle);
-	var citationbody = generateCitationBody($evtTarget, searchURL, format, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
+	var filename = generateFileName(format, modifiedTitle),
+		citationbody = generateCitationBody($evtTarget, searchURL, format, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
 	download(filename, citationbody);
 }
 
 function generateFileName(format, modifiedTitle) {
+	var filename;
 	if (format == 'ris')
-		var filename = modifiedTitle + '.ris';
+		filename = modifiedTitle + '.ris';
 	else if (format == 'bib')
-		var filename = modifiedTitle + '.bib';
+		filename = modifiedTitle + '.bib';
 	else if (format == 'enw')
-		var filename = modifiedTitle + '.enw';
+		filename = modifiedTitle + '.enw';
 	return filename;
 }
 
 function generateCitationBody($evtTarget, searchURL, format, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI) {
+	var citationbody;
 	if (format == 'ris') {
-		var citationbody = makeRIScitation($evtTarget, searchURL, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
+		citationbody = makeRIScitation($evtTarget, searchURL, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
 	}
 	else if (format == 'bib') {
-		var citationbody = makeBibTeXcitation($evtTarget, searchURL, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
+		citationbody = makeBibTeXcitation($evtTarget, searchURL, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
 	}
 	else if (format == 'enw') {
-		var citationbody = makeEndNotecitation($evtTarget, searchURL, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
+		citationbody = makeEndNotecitation($evtTarget, searchURL, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
 	}
 	return citationbody;
 }
 
 function makeRIScitation($evtTarget, searchURL, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI) {
+	var citationbody;
 	if ((isDataSet($evtTarget)) || (isGDSBrowserPage()) || (isSeries($evtTarget)) || (isGSEPage())) {
 	// If is related to citation for datasets or series
-		var citationbody = 'TY  - DATA\n';
+		citationbody = 'TY  - DATA\n';
 		citationbody = citationbody + 'DP  - National Center for Biotechnology Information, U.S. National Library of Medicine Gene Expression Omnibus (GEO) Datasets\n';
 	}
 	else if (isPubMed()) {
 	// Else if is related to citation for PubMed articles
-		var citationbody = 'TY  - JOUR\n';
+		citationbody = 'TY  - JOUR\n';
 		citationbody = citationbody + 'JO  - ' + journal + '\n';
 		citationbody = citationbody + 'AB  - ' + abstract +'\n';
 		citationbody = citationbody + 'DO  - ' + DOI +'\n';
@@ -430,18 +439,19 @@ function makeRIScitation($evtTarget, searchURL, ID, modifiedTitle, authorMatrix,
 }
 
 function makeBibTeXcitation($evtTarget, searchURL, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI) {
+	var citationbody;
 	if ((isDataSet($evtTarget)) || (isGDSBrowserPage()) || (isSeries($evtTarget)) || (isGSEPage())) {
 	// If is related to citation for datasets or series
-		var citationbody = '@techreport{' + authorMatrix[0].split(', ')[0] + '_' + year + ',\n'; // What kind of "entry" type?
+		citationbody = '@techreport{' + authorMatrix[0].split(', ')[0] + '_' + year + ',\n'; // What kind of "entry" type?
 		citationbody = citationbody + 'note = {National Center for Biotechnology Information, U.S. National Library of Medicine Gene Expression Omnibus (GEO) Datasets},\n';
 	}
 	else if (isPubMed()) {
 	// Else if is related to citation for PubMed articles
-		var citationbody = '@article{' + modifiedTitle + '_' + year + ',\n';
+		citationbody = '@article{' + modifiedTitle + '_' + year + ',\n';
 		citationbody = citationbody + 'journal = {' + journal + '},\n';
 		citationbody = citationbody + 'abstract = {' + abstract + '},\n';
 		citationbody = citationbody + 'journal = {' + journal + '},\n';
-		if (DOI != '') {
+		if (DOI !== '') {
 		citationbody = citationbody + 'url = {http://dx.doi.org/' + DOI + '},\n';
 		}
 	}
@@ -463,14 +473,15 @@ function makeBibTeXcitation($evtTarget, searchURL, ID, modifiedTitle, authorMatr
 }
 
 function makeEndNotecitation($evtTarget, searchURL, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI) {
+	var citationbody;
 	if ((isDataSet($evtTarget)) || (isGDSBrowserPage()) || (isSeries($evtTarget)) || (isGSEPage())) {
 	// If is related to citation for datasets or series
-		var citationbody = '%0 Dataset\n';
+		citationbody = '%0 Dataset\n';
 		citationbody = citationbody + '%W ' + 'National Center for Biotechnology Information, U.S. National Library of Medicine Gene Expression Omnibus (GEO) Datasets\n';
 	}
 	else if (isPubMed()) {
 	// Else if is related to citation for PubMed articles
-		var citationbody = '%0 Journal Article\n';
+		citationbody = '%0 Journal Article\n';
 		citationbody = citationbody + '%J ' + journal + '\n';
 		citationbody = citationbody + '%X ' + abstract + '\n';
 		citationbody = citationbody + '%U http://dx.doi.org/' + DOI + '\n';
