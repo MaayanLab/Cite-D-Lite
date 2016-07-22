@@ -64,7 +64,7 @@ var CitationText = {
 		citationbody = citationbody + 'author = {';
 		for (i=0; i<authorMatrix.length; i++) { // Formatting authors
 			var last_first = authorMatrix[i].split(' ');
-			if (i == authorMatrix.length-1) {
+			if (i === authorMatrix.length-1) {
 				citationbody = citationbody + last_first[0] + ' ' + last_first[1] + '},\n';
 			}
 			else {

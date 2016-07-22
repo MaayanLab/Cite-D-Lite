@@ -23,7 +23,11 @@ module.exports = function(grunt) {
                 globals: {
                     jQuery: true
                 },
-                debug: true
+                debug: true,
+                unused: true,
+                curly: true,
+                eqeqeq: true,
+                funcscope: true
             }
         },
         concat: {

@@ -1,7 +1,6 @@
 var AjaxSuccess = {
 	GDSBrowserPage: function(data, $evtTarget, searchURL, format, ID) {
 		var $data = $(data),
-			series = '', // EMPTY
 			title = ScreenScraper.getTitle($data, $evtTarget),
 			modifiedTitle = 'GDS' + ID + ': ' + title,
 			year = ScreenScraper.getYear($data, $evtTarget),
