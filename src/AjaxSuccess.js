@@ -9,7 +9,7 @@ var AjaxSuccess = {
 			journal = '', // EMPTY
 			abstract = '', // EMPTY
 			DOI = '', // EMPTY
-			authorMatrix = getAuthorMatrix($data, $evtTarget, searchURL, format, ID, modifiedTitle, year, PubMedID, journal, abstract, DOI);
+			authorMatrix = ScreenScraper.getAuthorMatrix($data, $evtTarget, searchURL, format, ID, modifiedTitle, year, PubMedID, journal, abstract, DOI);
 		CitationFile.assemble($evtTarget, searchURL, format, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
 	},
 
@@ -23,7 +23,7 @@ var AjaxSuccess = {
 			journal = '', // EMPTY
 			abstract = '', // EMPTY
 			DOI = ''; // EMPTY
-		getAuthorMatrix($data, $evtTarget, searchURL, format, ID, modifiedTitle, year, PubMedID, journal, abstract, DOI);
+		ScreenScraper.getAuthorMatrix($data, $evtTarget, searchURL, format, ID, modifiedTitle, year, PubMedID, journal, abstract, DOI);
 	},
 
 	AbstractPage: function(data, $evtTarget, searchURL, format, PubMedID) {
@@ -34,7 +34,7 @@ var AjaxSuccess = {
 			journal = ScreenScraper.getJournal($data),
 			abstract = ScreenScraper.getAbstract($data),
 			DOI = ScreenScraper.getDOI($data),
-			authorMatrix = getAuthorMatrix($data, $evtTarget, searchURL, format, ID, modifiedTitle, year, PubMedID, journal, abstract, DOI);
+			authorMatrix = ScreenScraper.getAuthorMatrix($data, $evtTarget, searchURL, format, ID, modifiedTitle, year, PubMedID, journal, abstract, DOI);
 		CitationFile.assemble($evtTarget, searchURL, format, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
 	},
 
