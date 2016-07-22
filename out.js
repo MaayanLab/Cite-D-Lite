@@ -25,7 +25,7 @@ function getIntoGDSBrowserPage(format, ID, $evtTarget) {
 				abstract = '', // EMPTY
 				DOI = '', // EMPTY
 				authorMatrix = getAuthorMatrix($data, $evtTarget, PubMedID, searchURL, format, ID, series, modifiedTitle, year, journal, abstract, DOI);
-			generateCitationAndDownload($evtTarget, searchURL, format, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
+			CitationFile.assemble($evtTarget, searchURL, format, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
 		},
 		error: function() {
 			alert('Sorry, something went wrong.');
@@ -75,7 +75,7 @@ function getIntoAbstractPage(format, PubMedID, $evtTarget) {
 				modifiedTitle = ScreenScraper.getTitle($data, $evtTarget), // Title is only modified in the case of datasets & series
 				year = ScreenScraper.getYear($data, $evtTarget),
 				authorMatrix = getAuthorMatrix($data, $evtTarget, PubMedID, searchURL, format, ID, series, modifiedTitle, year, journal, abstract, DOI);
-			generateCitationAndDownload($evtTarget, searchURL, format, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
+			CitationFile.assemble($evtTarget, searchURL, format, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
 		},
 		error: function() {
 			alert('Sorry, something went wrong.');
@@ -112,7 +112,7 @@ function getAuthorMatrix($data, $evtTarget, PubMedID, searchURL, format, ID, ser
 				for (i=0;i<authorMatrix.length;i++) { // Insert comma between last & first name
 					authorMatrix[i] = authorMatrix[i].replace(' ',', ');
 				}
-				generateCitationAndDownload($evtTarget, searchURL, format, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
+				CitationFile.assemble($evtTarget, searchURL, format, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
 			},
 			error: function () {
 				alert('Sorry, no citation available.');
@@ -131,15 +131,6 @@ function getAuthorMatrix($data, $evtTarget, PubMedID, searchURL, format, ID, ser
 		return authorMatrix;
 	}
 }
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////// ALL THINGS RELATED TO PUTTING THE CITATION TOGETHER //////////
-function generateCitationAndDownload($evtTarget, searchURL, format, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI) {
-	var filename = CitationFile.fileName(format, modifiedTitle),
-		citationbody = CitationFile.citationBody($evtTarget, searchURL, format, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
-	CitationFile.download(filename, citationbody);
-}
-
-
 
 ////////// ALL THINGS RELATED TO CHECKING TYPE OF PAGE //////////
 // Return true if user is on datasets search results page, false otherwise.
@@ -381,6 +372,7 @@ var ScreenScraper = {
 	}
 };
 
+////////// ALL THINGS RELATED TO PUTTING THE CITATION TOGETHER //////////
 var CitationFile = {
 	fileName: function(format, modifiedTitle) {
 		var filename;
@@ -405,6 +397,12 @@ var CitationFile = {
 			citationbody = CitationText.makeEndNotecitation($evtTarget, searchURL, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
 		}
 		return citationbody;
+	},
+
+	assemble: function($evtTarget, searchURL, format, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI) {
+		var filename = this.fileName(format, modifiedTitle),
+			citationbody = this.citationBody($evtTarget, searchURL, format, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
+		this.download(filename, citationbody);
 	},
 
 	// Downloads text file, bypasses server
