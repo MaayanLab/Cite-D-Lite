@@ -47,17 +47,17 @@ var Interface = {
 				// If is related to citation for datasets or series
 				if ((Type.isDataSet($evtTarget)) || (Page.isGDSBrowserPage())) {
 					var ID = ScreenScraper.getID($evtTarget);
-					getIntoGDSBrowserPage(format, ID, $evtTarget);
+					PreAjax.getIntoGDSBrowserPage(format, ID, $evtTarget);
 				}
 				else if ((Type.isSeries($evtTarget)) || (Page.isGSEPage())) {
 					var series = ScreenScraper.getSeries($evtTarget);
-					getIntoGSEPage(format, series, $evtTarget);
+					PreAjax.getIntoGSEPage(format, series, $evtTarget);
 				}
 			}
 			else if (Page.isPubMed()) {
 				// Else if is related to citation for PubMed articles
 				var PubMedID = ScreenScraper.getPubMedID($evtTarget);
-				getIntoAbstractPage(format, PubMedID, $evtTarget);
+				PreAjax.getIntoAbstractPage(format, PubMedID, $evtTarget);
 			}
 		});
 	},

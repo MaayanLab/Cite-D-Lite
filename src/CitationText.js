@@ -51,7 +51,7 @@ var CitationText = {
 		}
 		else if (Page.isPubMed()) {
 		// Else if is related to citation for PubMed articles
-			citationbody = '@article{' + modifiedTitle + '_' + year + ',\n';
+			citationbody = '@article{' + authorMatrix[0].split(', ')[0] + '_' + year + ',\n';
 			citationbody = citationbody + 'journal = {' + journal + '},\n';
 			citationbody = citationbody + 'abstract = {' + abstract + '},\n';
 			citationbody = citationbody + 'journal = {' + journal + '},\n';

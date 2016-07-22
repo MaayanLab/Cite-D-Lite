@@ -4,30 +4,6 @@ function main() {
 	Interface.whenClicked();
 }
 
-function getIntoGDSBrowserPage(format, ID, $evtTarget) {
-	var baseURL = 'http://www.ncbi.nlm.nih.gov/sites/GDSbrowser?acc=GDS',
-		searchURL = baseURL + ID;
-	AjaxCall.GDSBrowserPage(format, ID, $evtTarget, searchURL);
-}
-
-function getIntoGSEPage(format, series, $evtTarget) {
-	var baseURL = 'http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=',
-		searchURL = baseURL + series;
-	AjaxCall.GSEPage(format, series, $evtTarget, searchURL);
-}
-
-function getIntoAbstractPage(format, PubMedID, $evtTarget) {
-	var baseURL = 'http://www.ncbi.nlm.nih.gov/pubmed/',
-		searchURL = baseURL + PubMedID;
-	AjaxCall.AbstractPage(format, PubMedID, $evtTarget, searchURL);
-}
-
-function getPubMedAuthors($evtTarget, format, ID, modifiedTitle, year, PubMedID, journal, abstract, DOI) {
-	var pubmedBaseURL = 'http://www.ncbi.nlm.nih.gov/sites/PubmedCitation?id=',
-		pubmedSearchURL = pubmedBaseURL + PubMedID;
-	AjaxCall.PubMedAuthorMatrix($evtTarget, pubmedSearchURL, format, ID, modifiedTitle, year, journal, abstract, DOI);
-}
-
 ////////// ALL THINGS RELATED TO CHECKING TYPE OF PAGE //////////
 // Return true if user is on datasets search results page, false otherwise.
 var Page = {
@@ -148,17 +124,17 @@ var Interface = {
 				// If is related to citation for datasets or series
 				if ((Type.isDataSet($evtTarget)) || (Page.isGDSBrowserPage())) {
 					var ID = ScreenScraper.getID($evtTarget);
-					getIntoGDSBrowserPage(format, ID, $evtTarget);
+					PreAjax.getIntoGDSBrowserPage(format, ID, $evtTarget);
 				}
 				else if ((Type.isSeries($evtTarget)) || (Page.isGSEPage())) {
 					var series = ScreenScraper.getSeries($evtTarget);
-					getIntoGSEPage(format, series, $evtTarget);
+					PreAjax.getIntoGSEPage(format, series, $evtTarget);
 				}
 			}
 			else if (Page.isPubMed()) {
 				// Else if is related to citation for PubMed articles
 				var PubMedID = ScreenScraper.getPubMedID($evtTarget);
-				getIntoAbstractPage(format, PubMedID, $evtTarget);
+				PreAjax.getIntoAbstractPage(format, PubMedID, $evtTarget);
 			}
 		});
 	},
@@ -281,7 +257,7 @@ var ScreenScraper = {
 			return authorMatrix;
 		}
 		else if ((Type.isSeries($evtTarget)) || (Page.isGSEPage())) {
-			getPubMedAuthors($evtTarget, format, ID, modifiedTitle, year, PubMedID, journal, abstract, DOI);
+			PreAjax.getPubMedAuthors($evtTarget, format, ID, modifiedTitle, year, PubMedID, journal, abstract, DOI);
 		}
 		else if (Page.isPubMed()) {
 			authors = $data.find('.auths').text();
@@ -294,6 +270,32 @@ var ScreenScraper = {
 			}
 			return authorMatrix;
 		}
+	}
+};
+
+var PreAjax = {
+	getIntoGDSBrowserPage: function(format, ID, $evtTarget) {
+	var baseURL = 'http://www.ncbi.nlm.nih.gov/sites/GDSbrowser?acc=GDS',
+		searchURL = baseURL + ID;
+	AjaxCall.GDSBrowserPage(format, ID, $evtTarget, searchURL);
+	},
+
+	getIntoGSEPage: function(format, series, $evtTarget) {
+		var baseURL = 'http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=',
+			searchURL = baseURL + series;
+		AjaxCall.GSEPage(format, series, $evtTarget, searchURL);
+	},
+
+	getIntoAbstractPage: function(format, PubMedID, $evtTarget) {
+		var baseURL = 'http://www.ncbi.nlm.nih.gov/pubmed/',
+			searchURL = baseURL + PubMedID;
+		AjaxCall.AbstractPage(format, PubMedID, $evtTarget, searchURL);
+	},
+
+	getPubMedAuthors: function($evtTarget, format, ID, modifiedTitle, year, PubMedID, journal, abstract, DOI) {
+		var pubmedBaseURL = 'http://www.ncbi.nlm.nih.gov/sites/PubmedCitation?id=',
+			pubmedSearchURL = pubmedBaseURL + PubMedID;
+		AjaxCall.PubMedAuthorMatrix($evtTarget, pubmedSearchURL, format, ID, modifiedTitle, year, journal, abstract, DOI);
 	}
 };
 
@@ -506,7 +508,7 @@ var CitationText = {
 		}
 		else if (Page.isPubMed()) {
 		// Else if is related to citation for PubMed articles
-			citationbody = '@article{' + modifiedTitle + '_' + year + ',\n';
+			citationbody = '@article{' + authorMatrix[0].split(', ')[0] + '_' + year + ',\n';
 			citationbody = citationbody + 'journal = {' + journal + '},\n';
 			citationbody = citationbody + 'abstract = {' + abstract + '},\n';
 			citationbody = citationbody + 'journal = {' + journal + '},\n';
