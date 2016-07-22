@@ -136,16 +136,7 @@ function getAuthorMatrix($data, $evtTarget, PubMedID, searchURL, format, ID, ser
 function generateCitationAndDownload($evtTarget, searchURL, format, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI) {
 	var filename = CitationFile.fileName(format, modifiedTitle),
 		citationbody = CitationFile.citationBody($evtTarget, searchURL, format, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
-	download(filename, citationbody);
+	CitationFile.download(filename, citationbody);
 }
 
-// Downloads text file, bypasses server
-function download(filename, text) {
-	var element = document.createElement('a');
-	element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-	element.setAttribute('download', filename);
-	element.style.display = 'none';
-	document.body.appendChild(element);
-	element.click();
-	document.body.removeChild(element);
-}
+
