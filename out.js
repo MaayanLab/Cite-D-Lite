@@ -10,49 +10,19 @@ function main() {
 function getIntoGDSBrowserPage(format, ID, $evtTarget) {
 	var baseURL = 'http://www.ncbi.nlm.nih.gov/sites/GDSbrowser?acc=GDS',
 		searchURL = baseURL + ID;
-	$.ajax({
-		url: searchURL,
-		type: 'GET',
-		dataType: '',
-		success: function(data) {
-			AjaxSuccess.GDSBrowserPage(data , $evtTarget, searchURL, format, ID);
-		},
-		error: function() {
-			alert('Sorry, something went wrong.');
-		}
-	});
+	AjaxCall.GDSBrowserPage(format, ID, $evtTarget, searchURL);
 }
 
 function getIntoGSEPage(format, series, $evtTarget) {
 	var baseURL = 'http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=',
 		searchURL = baseURL + series;
-	$.ajax({
-		url: searchURL,
-		type: 'GET',
-		dataType: '',
-		success: function(data) {
-			AjaxSuccess.GSEPage(data, $evtTarget, searchURL, format, series);
-		},
-		error: function() {
-			alert('Sorry, something went wrong.');
-		}
-	});
+	AjaxCall.GSEPage(format, series, $evtTarget, searchURL);
 }
 
 function getIntoAbstractPage(format, PubMedID, $evtTarget) {
 	var baseURL = 'http://www.ncbi.nlm.nih.gov/pubmed/',
 		searchURL = baseURL + PubMedID;
-	$.ajax({
-		url: searchURL,
-		type: 'GET',
-		dataType: '',
-		success: function(data) {
-			AjaxSuccess.AbstractPage(data, $evtTarget, searchURL, format, PubMedID);
-		},
-		error: function() {
-			alert('Sorry, something went wrong.');
-		}
-	});
+	AjaxCall.AbstractPage(format, PubMedID, $evtTarget, searchURL);
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function getAuthorMatrix($data, $evtTarget, searchURL, format, ID, modifiedTitle, year, PubMedID, journal, abstract, DOI) {
@@ -344,7 +314,50 @@ var ScreenScraper = {
 	}
 };
 
-////////// ALL THINGS RELATED TO AJAX CALLS //////////
+var AjaxCall = {
+	GDSBrowserPage: function(format, ID, $evtTarget, searchURL) {
+		$.ajax({
+			url: searchURL,
+			type: 'GET',
+			dataType: '',
+			success: function(data) {
+				AjaxSuccess.GDSBrowserPage(data, $evtTarget, searchURL, format, ID);
+			},
+			error: function() {
+				alert('Sorry, something went wrong.');
+			}
+		});
+	},
+
+	GSEPage: function(format, series, $evtTarget, searchURL) {
+		$.ajax({
+			url: searchURL,
+			type: 'GET',
+			dataType: '',
+			success: function(data) {
+				AjaxSuccess.GSEPage(data, $evtTarget, searchURL, format, series);
+			},
+			error: function() {
+				alert('Sorry, something went wrong.');
+			}
+		});
+	},
+
+	AbstractPage: function(format, PubMedID, $evtTarget, searchURL) {
+		$.ajax({
+			url: searchURL,
+			type: 'GET',
+			dataType: '',
+			success: function(data) {
+				AjaxSuccess.AbstractPage(data, $evtTarget, searchURL, format, PubMedID);
+			},
+			error: function() {
+				alert('Sorry, something went wrong.');
+			}
+		});
+	}
+};
+
 var AjaxSuccess = {
 	GDSBrowserPage: function(data, $evtTarget, searchURL, format, ID) {
 		var $data = $(data),
@@ -385,6 +398,7 @@ var AjaxSuccess = {
 		CitationFile.assemble($evtTarget, searchURL, format, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
 	}
 };
+
 ////////// ALL THINGS RELATED TO PUTTING THE CITATION TOGETHER //////////
 var CitationFile = {
 	fileName: function(format, modifiedTitle) {

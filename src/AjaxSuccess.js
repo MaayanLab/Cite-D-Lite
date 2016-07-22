@@ -1,4 +1,3 @@
-////////// ALL THINGS RELATED TO AJAX CALLS //////////
 var AjaxSuccess = {
 	GDSBrowserPage: function(data, $evtTarget, searchURL, format, ID) {
 		var $data = $(data),
