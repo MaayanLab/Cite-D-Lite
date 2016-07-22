@@ -41,25 +41,7 @@ function getAuthorMatrix($data, $evtTarget, searchURL, format, ID, modifiedTitle
 	else if ((Type.isSeries($evtTarget)) || (Page.isGSEPage())) {
 		var pubmedBaseURL = 'http://www.ncbi.nlm.nih.gov/sites/PubmedCitation?id=',
 			pubmedSearchURL = pubmedBaseURL + PubMedID;
-		$.ajax({
-			url: pubmedSearchURL,
-			type: 'GET',
-			dataType: '',
-			success: function(pubmedCitation) {
-				var $pubmedCitation = $(pubmedCitation);
-				authors = $pubmedCitation.find('.authors').text();
-				authors = authors.slice(0,authors.length-1); // Get rid of extra space at end of string
-				authors = authors.replace(/\s*,\s*/g, ','); // Get rid of spaces after commas
-				authorMatrix = authors.split(","); // Divides string of authors into vector of authors
-				for (i=0;i<authorMatrix.length;i++) { // Insert comma between last & first name
-					authorMatrix[i] = authorMatrix[i].replace(' ',', ');
-				}
-				CitationFile.assemble($evtTarget, searchURL, format, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
-			},
-			error: function () {
-				alert('Sorry, no citation available.');
-			}
-		});
+		AjaxCall.PubMedAuthorMatrix($evtTarget, pubmedSearchURL, format, ID, modifiedTitle, year, journal, abstract, DOI);
 	}
 	else if (Page.isPubMed()) {
 		authors = $data.find('.auths').text();
@@ -355,6 +337,20 @@ var AjaxCall = {
 				alert('Sorry, something went wrong.');
 			}
 		});
+	},
+
+	PubMedAuthorMatrix: function($evtTarget, pubmedSearchURL, format, ID, modifiedTitle, year, journal, abstract, DOI) {
+		$.ajax({
+			url: pubmedSearchURL,
+			type: 'GET',
+			dataType: '',
+			success: function(pubmedCitation) {
+				AjaxSuccess.PubMedAuthorMatrix(pubmedCitation, $evtTarget, pubmedSearchURL, format, ID, modifiedTitle, year, journal, abstract, DOI);
+			},
+			error: function () {
+				alert('Sorry, no citation available.');
+			}
+		});
 	}
 };
 
@@ -395,6 +391,18 @@ var AjaxSuccess = {
 			abstract = ScreenScraper.getAbstract($data),
 			DOI = ScreenScraper.getDOI($data),
 			authorMatrix = getAuthorMatrix($data, $evtTarget, searchURL, format, ID, modifiedTitle, year, PubMedID, journal, abstract, DOI);
+		CitationFile.assemble($evtTarget, searchURL, format, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
+	},
+
+	PubMedAuthorMatrix: function(pubmedCitation, $evtTarget, searchURL, format, ID, modifiedTitle, year, journal, abstract, DOI) {
+		var $pubmedCitation = $(pubmedCitation);
+			authors = $pubmedCitation.find('.authors').text();
+			authors = authors.slice(0,authors.length-1); // Get rid of extra space at end of string
+			authors = authors.replace(/\s*,\s*/g, ','); // Get rid of spaces after commas
+			authorMatrix = authors.split(","); // Divides string of authors into vector of authors
+			for (i=0;i<authorMatrix.length;i++) { // Insert comma between last & first name
+				authorMatrix[i] = authorMatrix[i].replace(' ',', ');
+			}
 		CitationFile.assemble($evtTarget, searchURL, format, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
 	}
 };

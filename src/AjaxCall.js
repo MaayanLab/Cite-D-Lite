@@ -39,5 +39,19 @@ var AjaxCall = {
 				alert('Sorry, something went wrong.');
 			}
 		});
+	},
+
+	PubMedAuthorMatrix: function($evtTarget, pubmedSearchURL, format, ID, modifiedTitle, year, journal, abstract, DOI) {
+		$.ajax({
+			url: pubmedSearchURL,
+			type: 'GET',
+			dataType: '',
+			success: function(pubmedCitation) {
+				AjaxSuccess.PubMedAuthorMatrix(pubmedCitation, $evtTarget, pubmedSearchURL, format, ID, modifiedTitle, year, journal, abstract, DOI);
+			},
+			error: function () {
+				alert('Sorry, no citation available.');
+			}
+		});
 	}
 };
