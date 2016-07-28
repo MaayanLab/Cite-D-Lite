@@ -103,7 +103,6 @@ var Interface = {
 			var $elem = $(elem),
 				iconURL = chrome.extension.getURL("icon_128.png"),
 				citationlabel;
-				// highlightlabel;
 			if ((Type.isDataSet($elem)) || (Page.isGDSBrowserPage())) {
 				citationlabel = 'Cite Dataset';
 			}
@@ -112,9 +111,6 @@ var Interface = {
 			}
 			else if (Page.isPubMed()) {
 				citationlabel = 'PubMed Citation';
-				// if (Page.isPubMedAbstractPage()) {
-				// 	highlightlabel = 'Highlight Text';
-				// }				
 			}
 			self.addButtons($elem, iconURL, citationlabel);
 		});
@@ -610,7 +606,6 @@ var Abstract = {
 			});
 
 			var reducedsentences = arr.map(function(i) { return i.sentence; });
-			console.log(reducedsentences);
 			abstracttext.innerHTML = abstracttext.innerHTML.split('. ').map(function(sentence) {
 				if(reducedsentences.indexOf(sentence) !== -1) {
 					return '<mark>'+sentence+'</mark>';
