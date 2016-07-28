@@ -13,6 +13,7 @@ module.exports = function(grunt) {
         SRC + 'AjaxSuccess.js',
         SRC + 'CitationFile.js',
         SRC + 'CitationText.js',
+        SRC + 'Abstract.js',
         SRC + 'close.js'
     ];
 

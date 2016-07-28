@@ -1,7 +1,7 @@
 {
-	"name": "Citation Generator & Article Highlighter",
+	"name": "Cite-D-Lite",
 	"version": "1.0",
-	"description": "This extension creates citations for GEO datasets & PubMed articles and highlights PubMed abstracts.",
+	"description": "Ma'ayan Lab",
 	
 	"icons":{
 		"128": "icon_128.png"
@@ -24,7 +24,7 @@
 				"button.css"
 			],
 			"js": [
-				"jquery.js","out.js"
+				"underscore-min.js", "jquery.js", "summarizer.js", "out.js"
 			]
 		}
 	],

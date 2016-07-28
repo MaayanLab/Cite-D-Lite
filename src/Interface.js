@@ -25,6 +25,7 @@ var Interface = {
 			var $elem = $(elem),
 				iconURL = chrome.extension.getURL("icon_128.png"),
 				citationlabel;
+				// highlightlabel;
 			if ((Type.isDataSet($elem)) || (Page.isGDSBrowserPage())) {
 				citationlabel = 'Cite Dataset';
 			}
@@ -33,6 +34,9 @@ var Interface = {
 			}
 			else if (Page.isPubMed()) {
 				citationlabel = 'PubMed Citation';
+				// if (Page.isPubMedAbstractPage()) {
+				// 	highlightlabel = 'Highlight Text';
+				// }				
 			}
 			self.addButtons($elem, iconURL, citationlabel);
 		});

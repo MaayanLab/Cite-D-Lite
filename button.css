@@ -26,3 +26,32 @@
   background-color: #cccccc;
   border: 1px solid #cccccc;
 }
+
+.highlightlabel {
+  color: black;
+  text-align: left;
+  text-transform: capitalize;
+  font-family: Arial, sans-serif;
+  font-size: 12px;
+  margin: 1px 1px;
+}
+
+.highlightbutton {
+  background-color: #e6e6e6;
+  border: 1px solid #e6e6e6;
+  color: black;
+  padding: 4px 8px;
+  text-align: center;
+  text-decoration: underline;
+  display: inline-block;
+  font-size: 12px;
+  font-family: Arial, sans-serif;
+  border-radius: 4px;
+  margin: 4px 2px;
+  transition-duration: 0.4s;
+}
+
+.highlightbutton:hover {
+  background-color: #cccccc;
+  border: 1px solid #cccccc;
+}
