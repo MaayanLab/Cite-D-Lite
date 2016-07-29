@@ -41,13 +41,13 @@ var AjaxCall = {
 		});
 	},
 
-	PubMedAuthorMatrix: function($evtTarget, pubmedSearchURL, format, ID, modifiedTitle, year, journal, abstract, DOI) {
+	PubMedAuthorMatrix: function($evtTarget, pubmedSearchURL, format, ID, modifiedTitle, year, journal, abstract, DOI, searchURL) {
 		$.ajax({
 			url: pubmedSearchURL,
 			type: 'GET',
 			dataType: '',
 			success: function(pubmedCitation) {
-				AjaxSuccess.PubMedAuthorMatrix(pubmedCitation, $evtTarget, pubmedSearchURL, format, ID, modifiedTitle, year, journal, abstract, DOI);
+				AjaxSuccess.PubMedAuthorMatrix(pubmedCitation, $evtTarget, pubmedSearchURL, format, ID, modifiedTitle, year, journal, abstract, DOI, searchURL);
 			},
 			error: function () {
 				alert('Sorry, no citation available.');

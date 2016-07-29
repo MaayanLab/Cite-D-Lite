@@ -106,7 +106,7 @@ var ScreenScraper = {
 			return authorMatrix;
 		}
 		else if ((Type.isSeries($evtTarget)) || (Page.isGSEPage())) {
-			PreAjax.getPubMedAuthors($evtTarget, format, ID, modifiedTitle, year, PubMedID, journal, abstract, DOI);
+			PreAjax.getPubMedAuthors($evtTarget, format, ID, modifiedTitle, year, PubMedID, journal, abstract, DOI, searchURL);
 		}
 		else if (Page.isPubMed()) {
 			authors = $data.find('.auths').text();

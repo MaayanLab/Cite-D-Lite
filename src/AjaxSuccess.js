@@ -37,7 +37,7 @@ var AjaxSuccess = {
 		CitationFile.assemble($evtTarget, searchURL, format, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
 	},
 
-	PubMedAuthorMatrix: function(pubmedCitation, $evtTarget, searchURL, format, ID, modifiedTitle, year, journal, abstract, DOI) {
+	PubMedAuthorMatrix: function(pubmedCitation, $evtTarget, pubmedSearchURL, format, ID, modifiedTitle, year, journal, abstract, DOI, searchURL) {
 		var $pubmedCitation = $(pubmedCitation);
 			authors = $pubmedCitation.find('.authors').text();
 			authors = authors.slice(0,authors.length-1); // Get rid of extra space at end of string

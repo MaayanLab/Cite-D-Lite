@@ -258,7 +258,7 @@ var ScreenScraper = {
 			return authorMatrix;
 		}
 		else if ((Type.isSeries($evtTarget)) || (Page.isGSEPage())) {
-			PreAjax.getPubMedAuthors($evtTarget, format, ID, modifiedTitle, year, PubMedID, journal, abstract, DOI);
+			PreAjax.getPubMedAuthors($evtTarget, format, ID, modifiedTitle, year, PubMedID, journal, abstract, DOI, searchURL);
 		}
 		else if (Page.isPubMed()) {
 			authors = $data.find('.auths').text();
@@ -293,10 +293,10 @@ var PreAjax = {
 		AjaxCall.AbstractPage(format, PubMedID, $evtTarget, searchURL);
 	},
 
-	getPubMedAuthors: function($evtTarget, format, ID, modifiedTitle, year, PubMedID, journal, abstract, DOI) {
+	getPubMedAuthors: function($evtTarget, format, ID, modifiedTitle, year, PubMedID, journal, abstract, DOI, searchURL) {
 		var pubmedBaseURL = 'http://www.ncbi.nlm.nih.gov/sites/PubmedCitation?id=',
 			pubmedSearchURL = pubmedBaseURL + PubMedID;
-		AjaxCall.PubMedAuthorMatrix($evtTarget, pubmedSearchURL, format, ID, modifiedTitle, year, journal, abstract, DOI);
+		AjaxCall.PubMedAuthorMatrix($evtTarget, pubmedSearchURL, format, ID, modifiedTitle, year, journal, abstract, DOI, searchURL);
 	}
 };
 
@@ -343,13 +343,13 @@ var AjaxCall = {
 		});
 	},
 
-	PubMedAuthorMatrix: function($evtTarget, pubmedSearchURL, format, ID, modifiedTitle, year, journal, abstract, DOI) {
+	PubMedAuthorMatrix: function($evtTarget, pubmedSearchURL, format, ID, modifiedTitle, year, journal, abstract, DOI, searchURL) {
 		$.ajax({
 			url: pubmedSearchURL,
 			type: 'GET',
 			dataType: '',
 			success: function(pubmedCitation) {
-				AjaxSuccess.PubMedAuthorMatrix(pubmedCitation, $evtTarget, pubmedSearchURL, format, ID, modifiedTitle, year, journal, abstract, DOI);
+				AjaxSuccess.PubMedAuthorMatrix(pubmedCitation, $evtTarget, pubmedSearchURL, format, ID, modifiedTitle, year, journal, abstract, DOI, searchURL);
 			},
 			error: function () {
 				alert('Sorry, no citation available.');
@@ -397,7 +397,7 @@ var AjaxSuccess = {
 		CitationFile.assemble($evtTarget, searchURL, format, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
 	},
 
-	PubMedAuthorMatrix: function(pubmedCitation, $evtTarget, searchURL, format, ID, modifiedTitle, year, journal, abstract, DOI) {
+	PubMedAuthorMatrix: function(pubmedCitation, $evtTarget, pubmedSearchURL, format, ID, modifiedTitle, year, journal, abstract, DOI, searchURL) {
 		var $pubmedCitation = $(pubmedCitation);
 			authors = $pubmedCitation.find('.authors').text();
 			authors = authors.slice(0,authors.length-1); // Get rid of extra space at end of string
