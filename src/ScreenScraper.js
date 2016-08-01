@@ -100,7 +100,7 @@ var ScreenScraper = {
 			authors = authors.slice(0,authors.length-2); // Get rid of extra space and punctuation at end of string
 			authors = authors.replace(/\s*,\s*/g, ','); // Get rid of spaces after commas
 			authorMatrix = authors.split(","); // Divides string of authors into vector of authors
-			for (i=0;i<authorMatrix.length;i++) { // Insert comma between last & first name
+			for (i=0; i<authorMatrix.length; i++) { // Insert comma between last & first name
 				authorMatrix[i] = authorMatrix[i].replace(' ',', ');
 			}
 			return authorMatrix;
@@ -113,7 +113,7 @@ var ScreenScraper = {
 			authors = authors.slice(0,authors.length-1); // Get rid of punctuation at end of string
 			authors = authors.replace(/\s*,\s*/g, ','); // Get rid of spaces after commas
 			authorMatrix = authors.split(","); // Divides string of authors into vector of authors
-			for (i=0;i<authorMatrix.length;i++) {
+			for (i=0; i<authorMatrix.length; i++) {
 				authorMatrix[i] = authorMatrix[i].replace(' ',', '); // Insert comma between last & first name
 				authorMatrix[i] = authorMatrix[i].slice(0,authorMatrix[i].length-1); // Get rid of number after name
 			}

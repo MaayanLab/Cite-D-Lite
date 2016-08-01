@@ -23,11 +23,49 @@ function standardDeviation(values){
 	return stdDev;
 }
 
-
-function CreateColor(val) {
-	return  '#f'+Math.floor(0xf * (Math.min(0.5, -val / 4.0) + 0.5)).toString(16)+'0';
+function zScore_0to1(zScore) {
+	// Assume all zScores are +-2 of the mean, else zScores above or below +-2 will be bumped to +-2, respectively
+	// Convert zScore range of [-2,2] to unit scale of [0,1]
+	var zScoreDiv4 = zScore / 4;
+	if (zScoreDiv4 > 0) {
+		zScoreDiv4 = Math.min(0.5, zScoreDiv4);
+	}
+	else if (zScoreDiv4 < 0) {
+		zScoreDiv4 = Math.max(-0.5, zScoreDiv4);
+	}
+	var unitScore_0to1 = zScoreDiv4 + 0.5;
+	return unitScore_0to1;
 }
 
+function zScore_1to0(zScore) {
+	// Assume all zScores are +-2 of the mean, else zScores above or below +-2 will be bumped to +-2, respectively
+	// Convert zScore range of [-2,2] to unit scale of [1,0]
+	var zScoreDiv4 = -zScore / 4;
+	if (zScoreDiv4 > 0) {
+		zScoreDiv4 = Math.min(0.5, zScoreDiv4);
+	}
+	else if (zScoreDiv4 < 0) {
+		zScoreDiv4 = Math.max(-0.5, zScoreDiv4);
+	}
+	var unitScore_1to0 = zScoreDiv4 + 0.5;
+	return unitScore_1to0;
+}
+
+function CreateColor(zScore) {
+	unitScore_0to1 = zScore_0to1(zScore);
+	unitScore_1to0 = zScore_1to0(zScore);
+	// Hexadecimal red to yellow
+	// return ('#'+Math.floor(0xf * (Math.min(0.5, -zScore / 4.0) + 0.5)).toString(16))+(Math.floor(0xf * (Math.min(0.5, -zScore / 4.0) + 0.5)).toString(16))+(Math.floor(0xf * (Math.min(0.5, zScore / 4.0) + 0.5)).toString(16));
+
+	// RGBA red to yellow (reduced opacity)
+	// return ('rgba(255,' + Math.floor(255*unitScore_1to0) + ',0,0.7)');
+
+	// RGBA blue to red (reduced opacity)
+	// return ('rgba(' + Math.floor(255*unitScore_1to0) + ',0,' + Math.floor(255*unitScore_0to1) + ',0.5)');
+
+	// RGB red to white
+	return ('rgb(255,' + Math.floor(255*unitScore_1to0) + ',' + Math.floor(255*unitScore_1to0) + ')');
+}
 
 var Abstract = {
 	highlight: function() {
@@ -89,9 +127,8 @@ var Abstract = {
 			abstracttext.innerHTML = abstracttext.innerHTML.split(/\. |\.|\?|!|\n/g).map(function(sentence) {
 				var i = reducedsentences.indexOf(sentence);
 				if(i !== -1) {
-					var val = (arr[i].PR - mean) / stdev;
-					console.log(val);
-					return '<mark style="background-color: '+CreateColor(val)+'">'+sentence+'</mark>';
+					var zScore = (arr[i].PR - mean) / stdev;
+					return '<mark style="background-color: '+CreateColor(zScore)+'">'+sentence+'</mark>';
 				}
 				else {
 					return sentence;

@@ -43,7 +43,7 @@ var AjaxSuccess = {
 			authors = authors.slice(0,authors.length-1); // Get rid of extra space at end of string
 			authors = authors.replace(/\s*,\s*/g, ','); // Get rid of spaces after commas
 			authorMatrix = authors.split(","); // Divides string of authors into vector of authors
-			for (i=0;i<authorMatrix.length;i++) { // Insert comma between last & first name
+			for (i=0; i<authorMatrix.length; i++) { // Insert comma between last & first name
 				authorMatrix[i] = authorMatrix[i].replace(' ',', ');
 			}
 		CitationFile.assemble($evtTarget, searchURL, format, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
