@@ -10,9 +10,9 @@ var CitationText = {
 		// Else if is related to citation for PubMed articles
 			citationbody = 'TY  - JOUR\n';
 			citationbody = citationbody + 'JO  - ' + journal + '\n';
-			citationbody = citationbody + 'AB  - ' + abstract +'\n';
-			citationbody = citationbody + 'DO  - ' + DOI +'\n';
-			citationbody = citationbody + 'UR  - http://dx.doi.org/' + DOI + '},\n';
+			citationbody = citationbody + 'AB  - ' + abstract + '\n';
+			citationbody = citationbody + 'DO  - ' + DOI + '\n';
+			citationbody = citationbody + 'UR  - http://dx.doi.org/' + DOI + '\n';
 		}
 		citationbody = citationbody + 'TI  - ' + modifiedTitle + '\n';
 		citationbody = citationbody + 'PY  - ' + year + '\n';

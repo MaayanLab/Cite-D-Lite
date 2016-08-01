@@ -470,9 +470,9 @@ var CitationText = {
 		// Else if is related to citation for PubMed articles
 			citationbody = 'TY  - JOUR\n';
 			citationbody = citationbody + 'JO  - ' + journal + '\n';
-			citationbody = citationbody + 'AB  - ' + abstract +'\n';
-			citationbody = citationbody + 'DO  - ' + DOI +'\n';
-			citationbody = citationbody + 'UR  - http://dx.doi.org/' + DOI + '},\n';
+			citationbody = citationbody + 'AB  - ' + abstract + '\n';
+			citationbody = citationbody + 'DO  - ' + DOI + '\n';
+			citationbody = citationbody + 'UR  - http://dx.doi.org/' + DOI + '\n';
 		}
 		citationbody = citationbody + 'TI  - ' + modifiedTitle + '\n';
 		citationbody = citationbody + 'PY  - ' + year + '\n';
@@ -560,6 +560,37 @@ var CitationText = {
 	}
 };
 
+// https://derickbailey.com/2014/09/21/calculating-standard-deviation-with-array-map-and-array-reduce-in-javascript/
+function average(data){
+	var sum = data.reduce(function(sum, value){
+	return sum + value;
+	}, 0);
+
+	var avg = sum / data.length;
+	return avg;
+}
+
+function standardDeviation(values){
+	var avg = average(values);
+
+	var squareDiffs = values.map(function(value){
+	var diff = value - avg;
+	var sqrDiff = diff * diff;
+	return sqrDiff;
+	});
+
+	var avgSquareDiff = average(squareDiffs);
+
+	var stdDev = Math.sqrt(avgSquareDiff);
+	return stdDev;
+}
+
+
+function CreateColor(val) {
+	return  '#f'+Math.floor(0xf * (Math.min(0.5, -val / 4.0) + 0.5)).toString(16)+'0';
+}
+
+
 var Abstract = {
 	highlight: function() {
 		var configObj = {
@@ -612,10 +643,17 @@ var Abstract = {
 			return a.idx - b.idx;
 			});
 
+			var PRs = arr.map(function(i) { return i.PR; });
+			var mean = average(PRs);
+			var stdev = standardDeviation(PRs);
+
 			var reducedsentences = arr.map(function(i) { return i.sentence; });
 			abstracttext.innerHTML = abstracttext.innerHTML.split(/\. |\.|\?|!|\n/g).map(function(sentence) {
-				if(reducedsentences.indexOf(sentence) !== -1) {
-					return '<mark>'+sentence+'</mark>';
+				var i = reducedsentences.indexOf(sentence);
+				if(i !== -1) {
+					var val = (arr[i].PR - mean) / stdev;
+					console.log(val);
+					return '<mark style="background-color: '+CreateColor(val)+'">'+sentence+'</mark>';
 				}
 				else {
 					return sentence;
