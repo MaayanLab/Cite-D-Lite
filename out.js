@@ -18,14 +18,19 @@ var GEOPage = {
 		}
 	},
 
-	// Return true if user is on GDS browser page, false otherwise.
+	// Return true if user is on GDS browser page, false otherwise. [DATASET]
 	isGDSBrowserPage: function() {
 		return Boolean(window.location.pathname.match(/\/sites\/GDSbrowser/) && window.location.search.match(/\?acc=GDS/));
 	},
 
-	// Return true if user is on GSE page, false otherwise.
+	// Return true if user is on GSE page, false otherwise. [SERIES]
 	isGSEPage: function() {
 		return Boolean(window.location.pathname.match(/\/geo\/query\/acc.cgi/) && window.location.search.match(/\?acc=GSE/));
+	},
+
+	// Return true if user is on GSM page, false otherwise. [SAMPLE]
+	isGSMPage: function() {
+		return Boolean(window.location.pathname.match(/\/geo\/query\/acc.cgi/) && window.location.search.match(/\?acc=GSM/));
 	}
 };
 
@@ -89,7 +94,19 @@ var GEOType = {
 				return Boolean($object.parent().find('.src').text().match('Series'));
 			}
 		}
-	}
+	},
+
+	// Return true if result on search results page is a sample, false otherwise.
+	isSample: function($object) { // $object is either $evtTarget or $elem
+		if (GEOPage.isGEOSearchResultsPage()) {
+			if (Boolean($object.attr('class').match('citationbutton'))) { // $object is $evtTarget
+				return Boolean($object.parent().parent().find('.src').text().match('Sample'));
+			}
+			else { // $object is $elem
+				return Boolean($object.parent().find('.src').text().match('Sample'));
+			}
+		}
+	}	
 };
 
 var DataMedType = {
@@ -114,6 +131,9 @@ var Interface = {
 		}
 		else if (GEOPage.isGSEPage()) {
 			$parents = $('.pubmed_id').parent();
+		}
+		else if (GEOPage.isGSMPage()) {
+			$parents = $('td:contains("Data processing")').eq(5).parent().find('td').eq(1);
 		}
 		else if (GEOPage.isGEOSearchResultsPage()) {
 			$parents = $('.rsltcont');
@@ -145,6 +165,9 @@ var Interface = {
 			else if ((GEOType.isSeries($elem)) || (GEOPage.isGSEPage())) {
 				citationlabel = 'Cite GEO Series';
 			}
+			else if ((GEOType.isSample($elem)) || (GEOPage.isGSMPage())) {
+				citationlabel = 'Cite GEO Sample';
+			}
 			else if (PubMedPage.isPubMed()) {
 				citationlabel = 'PubMed Citation';
 			}
@@ -175,6 +198,9 @@ var Interface = {
 				// Else if is related to citation for PubMed articles
 				var PubMedID = ScreenScraper.getPubMedID($evtTarget);
 				PreAjax.getIntoAbstractPage(format, PubMedID, $evtTarget);
+			}
+			else if (DataMedPage.isDataMed()) {
+				alert('hi');
 			}
 		});
 	},

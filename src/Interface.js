@@ -7,6 +7,9 @@ var Interface = {
 		else if (GEOPage.isGSEPage()) {
 			$parents = $('.pubmed_id').parent();
 		}
+		else if (GEOPage.isGSMPage()) {
+			$parents = $('td:contains("Data processing")').eq(5).parent().find('td').eq(1);
+		}
 		else if (GEOPage.isGEOSearchResultsPage()) {
 			$parents = $('.rsltcont');
 		}
@@ -36,6 +39,9 @@ var Interface = {
 			}
 			else if ((GEOType.isSeries($elem)) || (GEOPage.isGSEPage())) {
 				citationlabel = 'Cite GEO Series';
+			}
+			else if ((GEOType.isSample($elem)) || (GEOPage.isGSMPage())) {
+				citationlabel = 'Cite GEO Sample';
 			}
 			else if (PubMedPage.isPubMed()) {
 				citationlabel = 'PubMed Citation';
@@ -67,6 +73,9 @@ var Interface = {
 				// Else if is related to citation for PubMed articles
 				var PubMedID = ScreenScraper.getPubMedID($evtTarget);
 				PreAjax.getIntoAbstractPage(format, PubMedID, $evtTarget);
+			}
+			else if (DataMedPage.isDataMed()) {
+				alert('hi');
 			}
 		});
 	},
