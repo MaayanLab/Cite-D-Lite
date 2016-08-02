@@ -1,3 +1,5 @@
+// https://github.com/arnavroy/text-summarizer/blob/master/summarizer.js
+
 var Summarizer = {};
 Summarizer.Utility = {};
 
