@@ -1,12 +1,12 @@
 var CitationText = {
 	makeRIScitation: function($evtTarget, searchURL, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI) {
 		var citationbody;
-		if ((Type.isDataSet($evtTarget)) || (Page.isGDSBrowserPage()) || (Type.isSeries($evtTarget)) || (Page.isGSEPage())) {
+		if ((Type.isDataSet($evtTarget)) || (GEOPage.isGDSBrowserPage()) || (Type.isSeries($evtTarget)) || (GEOPage.isGSEPage())) {
 		// If is related to citation for datasets or series
 			citationbody = 'TY  - DATA\n';
 			citationbody = citationbody + 'DP  - National Center for Biotechnology Information, U.S. National Library of Medicine Gene Expression Omnibus (GEO) Datasets\n';
 		}
-		else if (Page.isPubMed()) {
+		else if (PubMedPage.isPubMed()) {
 		// Else if is related to citation for PubMed articles
 			citationbody = 'TY  - JOUR\n';
 			citationbody = citationbody + 'JO  - ' + journal + '\n';
@@ -44,12 +44,12 @@ var CitationText = {
 
 	makeBibTeXcitation: function($evtTarget, searchURL, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI) {
 		var citationbody;
-		if ((Type.isDataSet($evtTarget)) || (Page.isGDSBrowserPage()) || (Type.isSeries($evtTarget)) || (Page.isGSEPage())) {
+		if ((Type.isDataSet($evtTarget)) || (GEOPage.isGDSBrowserPage()) || (Type.isSeries($evtTarget)) || (GEOPage.isGSEPage())) {
 		// If is related to citation for datasets or series
 			citationbody = '@techreport{' + authorMatrix[0].split(', ')[0] + '_' + year + ',\n'; // What kind of "entry" type?
 			citationbody = citationbody + 'note = {National Center for Biotechnology Information, U.S. National Library of Medicine Gene Expression Omnibus (GEO) Datasets},\n';
 		}
-		else if (Page.isPubMed()) {
+		else if (PubMedPage.isPubMed()) {
 		// Else if is related to citation for PubMed articles
 			citationbody = '@article{' + authorMatrix[0].split(', ')[0] + '_' + year + ',\n';
 			citationbody = citationbody + 'journal = {' + journal + '},\n';
@@ -78,12 +78,12 @@ var CitationText = {
 
 	makeEndNotecitation: function($evtTarget, searchURL, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI) {
 		var citationbody;
-		if ((Type.isDataSet($evtTarget)) || (Page.isGDSBrowserPage()) || (Type.isSeries($evtTarget)) || (Page.isGSEPage())) {
+		if ((Type.isDataSet($evtTarget)) || (GEOPage.isGDSBrowserPage()) || (Type.isSeries($evtTarget)) || (GEOPage.isGSEPage())) {
 		// If is related to citation for datasets or series
 			citationbody = '%0 Dataset\n';
 			citationbody = citationbody + '%W ' + 'National Center for Biotechnology Information, U.S. National Library of Medicine Gene Expression Omnibus (GEO) Datasets\n';
 		}
-		else if (Page.isPubMed()) {
+		else if (PubMedPage.isPubMed()) {
 		// Else if is related to citation for PubMed articles
 			citationbody = '%0 Journal Article\n';
 			citationbody = citationbody + '%J ' + journal + '\n';

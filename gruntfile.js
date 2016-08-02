@@ -4,7 +4,8 @@ module.exports = function(grunt) {
 
     var src_files = [
         SRC + 'main.js',
-        SRC + 'Page.js',
+        SRC + 'GEOPage.js',
+        SRC + 'PubMedPage.js',
         SRC + 'Type.js',
         SRC + 'Interface.js',
         SRC + 'ScreenScraper.js',

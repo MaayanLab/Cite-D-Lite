@@ -1,19 +1,19 @@
 var Interface = {
 	locateParents: function() {
 		var $parents;
-		if (Page.isGDSBrowserPage()) {
+		if (GEOPage.isGDSBrowserPage()) {
 			$parents = $('.gds_panel');
 		}
-		else if (Page.isGSEPage()) {
+		else if (GEOPage.isGSEPage()) {
 			$parents = $('.pubmed_id').parent();
 		}
-		else if (Page.isDatasetSearchResultsPage()) {
+		else if (GEOPage.isGEOSearchResultsPage()) {
 			$parents = $('.rsltcont');
 		}
-		else if (Page.isPubMedAbstractPage()) {
+		else if (PubMedPage.isPubMedAbstractPage()) {
 			$parents = $('.resc.status');
 		}
-		else if (Page.isPubMedSearchResultsPage()) {
+		else if (PubMedPage.isPubMedSearchResultsPage()) {
 			$parents = $('.aux');
 		}
 		return $parents;
@@ -25,13 +25,13 @@ var Interface = {
 			var $elem = $(elem),
 				iconURL = chrome.extension.getURL("icon_128.png"),
 				citationlabel;
-			if ((Type.isDataSet($elem)) || (Page.isGDSBrowserPage())) {
+			if ((Type.isDataSet($elem)) || (GEOPage.isGDSBrowserPage())) {
 				citationlabel = 'Cite Dataset';
 			}
-			else if ((Type.isSeries($elem)) || (Page.isGSEPage())) {
+			else if ((Type.isSeries($elem)) || (GEOPage.isGSEPage())) {
 				citationlabel = 'Cite Series';
 			}
-			else if (Page.isPubMed()) {
+			else if (PubMedPage.isPubMed()) {
 				citationlabel = 'PubMed Citation';
 			}
 			self.addButtons($elem, iconURL, citationlabel);
@@ -43,18 +43,18 @@ var Interface = {
 			evt.preventDefault();
 			var $evtTarget = $(evt.target),
 				format = ScreenScraper.getCitationFormat($evtTarget);
-			if ((Type.isDataSet($evtTarget)) || (Page.isGDSBrowserPage()) || (Type.isSeries($evtTarget)) || (Page.isGSEPage())) {
+			if ((Type.isDataSet($evtTarget)) || (GEOPage.isGDSBrowserPage()) || (Type.isSeries($evtTarget)) || (GEOPage.isGSEPage())) {
 				// If is related to citation for datasets or series
-				if ((Type.isDataSet($evtTarget)) || (Page.isGDSBrowserPage())) {
+				if ((Type.isDataSet($evtTarget)) || (GEOPage.isGDSBrowserPage())) {
 					var ID = ScreenScraper.getID($evtTarget);
 					PreAjax.getIntoGDSBrowserPage(format, ID, $evtTarget);
 				}
-				else if ((Type.isSeries($evtTarget)) || (Page.isGSEPage())) {
+				else if ((Type.isSeries($evtTarget)) || (GEOPage.isGSEPage())) {
 					var series = ScreenScraper.getSeries($evtTarget);
 					PreAjax.getIntoGSEPage(format, series, $evtTarget);
 				}
 			}
-			else if (Page.isPubMed()) {
+			else if (PubMedPage.isPubMed()) {
 				// Else if is related to citation for PubMed articles
 				var PubMedID = ScreenScraper.getPubMedID($evtTarget);
 				PreAjax.getIntoAbstractPage(format, PubMedID, $evtTarget);
@@ -63,7 +63,7 @@ var Interface = {
 	},
 
 	addButtons: function($elem, iconURL, citationlabel) {
-		if (Page.isGDSBrowserPage()) {
+		if (GEOPage.isGDSBrowserPage()) {
 			$elem.after('<div class="citationstuff"><img alt="Citation Icon" src="'+iconURL+'" width="15" height="15"><b class="citationlabel">'+citationlabel+'</b><button class="citationbutton" id="ris">RIS (.ris)</button><button class="citationbutton" id="bib">BibTeX (.bib)</button><button class="citationbutton" id="enw">EndNote (.enw)</button></div>');			
 		}
 		else {

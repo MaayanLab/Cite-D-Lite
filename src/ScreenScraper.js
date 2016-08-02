@@ -9,10 +9,10 @@ var ScreenScraper = {
 	// Gets ID number of dataset (from search results or GDS browser page)
 	getID: function($evtTarget) {
 		var ID;
-		if (Page.isDatasetSearchResultsPage()) {
+		if (GEOPage.isGEOSearchResultsPage()) {
 			ID = $evtTarget.parent().parent().find('.rprtid').eq(1).find('dd').text();
 		}
-		else if (Page.isGDSBrowserPage()) {
+		else if (GEOPage.isGDSBrowserPage()) {
 			ID = $evtTarget.parent().parent().find('.caption').find('th').text().slice(39,43);
 		}
 		return ID;
@@ -21,10 +21,10 @@ var ScreenScraper = {
 	// Gets series (from search results or GSE page)
 	getSeries: function($evtTarget) {
 		var series;
-		if (Page.isDatasetSearchResultsPage()) {
+		if (GEOPage.isGEOSearchResultsPage()) {
 			series = $evtTarget.parent().parent().find('.rprtid').eq(0).find('dd').text();
 		}
-		else if (Page.isGSEPage()) {
+		else if (GEOPage.isGSEPage()) {
 			series = $evtTarget.parent().parent().parent().parent().find('tr').eq(0).find('strong').attr('id');
 		}
 		return series;
@@ -33,10 +33,10 @@ var ScreenScraper = {
 	// Gets PubMedID of PubMed article (from search results or abstract page)
 	getPubMedID: function($evtTarget) {
 		var PubMedID;
-		if (Page.isPubMedSearchResultsPage()) {
+		if (PubMedPage.isPubMedSearchResultsPage()) {
 			PubMedID = $evtTarget.parent().parent().find('dd').text();
 		}
-		else if (Page.isPubMedAbstractPage()) {
+		else if (PubMedPage.isPubMedAbstractPage()) {
 			PubMedID = $evtTarget.parent().parent().parent().find('dd').eq(0).text();
 		}
 		return PubMedID;
@@ -45,13 +45,13 @@ var ScreenScraper = {
 	////////// ALL THINGS RELATED TO GETTING INFO WITHIN AJAX CALL //////////
 	getTitle: function($data, $evtTarget) {
 		var title;
-		if ((Type.isDataSet($evtTarget)) || (Page.isGDSBrowserPage())) {
+		if ((Type.isDataSet($evtTarget)) || (GEOPage.isGDSBrowserPage())) {
 			title = $data.find('tbody').eq(1).find('tr').eq(1).find('td').eq(0).text();
 		}
-		else if ((Type.isSeries($evtTarget)) || (Page.isGSEPage())) {
+		else if ((Type.isSeries($evtTarget)) || (GEOPage.isGSEPage())) {
 			title = $data.find('tr').eq(19).find('td').eq(1).text();
 		}
-		else if (Page.isPubMed()) {
+		else if (PubMedPage.isPubMed()) {
 			title = $data.find('.rprt.abstract').find('h1').text();
 			title = title.slice(0,title.length-1); // Get rid of extra space at end of string
 		}
@@ -60,13 +60,13 @@ var ScreenScraper = {
 
 	getYear: function($data, $evtTarget) {
 		var year;
-		if ((Type.isDataSet($evtTarget)) || (Page.isGDSBrowserPage())) {
+		if ((Type.isDataSet($evtTarget)) || (GEOPage.isGDSBrowserPage())) {
 			year = $data.find('tbody').eq(1).find('tr').eq(7).find('td').eq(1).text().slice(0,4);
 		}
-		else if ((Type.isSeries($evtTarget)) || (Page.isGSEPage())) {
+		else if ((Type.isSeries($evtTarget)) || (GEOPage.isGSEPage())) {
 			year = $data.find('tr').eq(18).find('td').eq(1).text().slice(18,22);
 		}
-		else if (Page.isPubMed()) {
+		else if (PubMedPage.isPubMed()) {
 			var periodIndex = $data.find('.cit').text().indexOf('.');
 			year = $data.find('.cit').text().slice(periodIndex+2,periodIndex+6);
 		}
@@ -95,7 +95,7 @@ var ScreenScraper = {
 	getAuthorMatrix: function($data, $evtTarget, searchURL, format, ID, modifiedTitle, year, PubMedID, journal, abstract, DOI) {
 		var authors,
 		authorMatrix;	
-		if ((Type.isDataSet($evtTarget)) || (Page.isGDSBrowserPage())) {
+		if ((Type.isDataSet($evtTarget)) || (GEOPage.isGDSBrowserPage())) {
 			authors = $data.find('.authors').text();
 			authors = authors.slice(0,authors.length-2); // Get rid of extra space and punctuation at end of string
 			authors = authors.replace(/\s*,\s*/g, ','); // Get rid of spaces after commas
@@ -105,10 +105,10 @@ var ScreenScraper = {
 			}
 			return authorMatrix;
 		}
-		else if ((Type.isSeries($evtTarget)) || (Page.isGSEPage())) {
+		else if ((Type.isSeries($evtTarget)) || (GEOPage.isGSEPage())) {
 			PreAjax.getPubMedAuthors($evtTarget, format, ID, modifiedTitle, year, PubMedID, journal, abstract, DOI, searchURL);
 		}
-		else if (Page.isPubMed()) {
+		else if (PubMedPage.isPubMed()) {
 			authors = $data.find('.auths').text();
 			authors = authors.slice(0,authors.length-1); // Get rid of punctuation at end of string
 			authors = authors.replace(/\s*,\s*/g, ','); // Get rid of spaces after commas

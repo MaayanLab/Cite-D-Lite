@@ -5,10 +5,9 @@ function main() {
 	Abstract.highlight();
 }
 
-////////// ALL THINGS RELATED TO CHECKING TYPE OF PAGE //////////
-// Return true if user is on datasets search results page, false otherwise.
-var Page = {
-	isDatasetSearchResultsPage: function() {
+var GEOPage = {
+	// Return true if user is on datasets search results page, false otherwise.
+	isGEOSearchResultsPage: function() {
 		if (Boolean(window.location.pathname.match(/\/gds/) && window.location.search.match(/\?term=/))) {
 			// If is on search results page
 			return true;
@@ -27,8 +26,10 @@ var Page = {
 	// Return true if user is on GSE page, false otherwise.
 	isGSEPage: function() {
 		return Boolean(window.location.pathname.match(/\/geo\/query\/acc.cgi/) && window.location.search.match(/\?acc=GSE/));
-	},
+	}
+};
 
+var PubMedPage = {
 	// Return true if user is on PubMed search results page or article abstract page, false otherwise.
 	isPubMed: function() {
 		return Boolean(window.location.pathname.match(/\/pubmed/) && document.getElementById('database')[0].textContent.match('PubMed'));
@@ -45,6 +46,7 @@ var Page = {
 		}
 	},
 
+	// Return true if user is on PubMed abstract page, false otherwise.
 	isPubMedAbstractPage: function() {
 		return Boolean(window.location.pathname.match(/\/pubmed/) && document.getElementsByClassName('value')[0].textContent.match('Abstract'));
 	}
@@ -53,7 +55,7 @@ var Page = {
 var Type = {
 	// Return true if result on search results page is a dataset, false otherwise.
 	isDataSet: function($object) { // $object is either $evtTarget or $elem
-		if (Page.isDatasetSearchResultsPage()) {
+		if (GEOPage.isGEOSearchResultsPage()) {
 			if (Boolean($object.attr('class').match('citationbutton'))) { // $object is $evtTarget
 				return Boolean($object.parent().parent().find('.src').text().match('DataSet'));
 			}
@@ -65,7 +67,7 @@ var Type = {
 
 	// Return true if result on search results page is a series, false otherwise.
 	isSeries: function($object) { // $object is either $evtTarget or $elem
-		if (Page.isDatasetSearchResultsPage()) {
+		if (GEOPage.isGEOSearchResultsPage()) {
 			if (Boolean($object.attr('class').match('citationbutton'))) { // $object is $evtTarget
 				return Boolean($object.parent().parent().find('.src').text().match('Series'));
 			}
@@ -79,19 +81,19 @@ var Type = {
 var Interface = {
 	locateParents: function() {
 		var $parents;
-		if (Page.isGDSBrowserPage()) {
+		if (GEOPage.isGDSBrowserPage()) {
 			$parents = $('.gds_panel');
 		}
-		else if (Page.isGSEPage()) {
+		else if (GEOPage.isGSEPage()) {
 			$parents = $('.pubmed_id').parent();
 		}
-		else if (Page.isDatasetSearchResultsPage()) {
+		else if (GEOPage.isGEOSearchResultsPage()) {
 			$parents = $('.rsltcont');
 		}
-		else if (Page.isPubMedAbstractPage()) {
+		else if (PubMedPage.isPubMedAbstractPage()) {
 			$parents = $('.resc.status');
 		}
-		else if (Page.isPubMedSearchResultsPage()) {
+		else if (PubMedPage.isPubMedSearchResultsPage()) {
 			$parents = $('.aux');
 		}
 		return $parents;
@@ -103,13 +105,13 @@ var Interface = {
 			var $elem = $(elem),
 				iconURL = chrome.extension.getURL("icon_128.png"),
 				citationlabel;
-			if ((Type.isDataSet($elem)) || (Page.isGDSBrowserPage())) {
+			if ((Type.isDataSet($elem)) || (GEOPage.isGDSBrowserPage())) {
 				citationlabel = 'Cite Dataset';
 			}
-			else if ((Type.isSeries($elem)) || (Page.isGSEPage())) {
+			else if ((Type.isSeries($elem)) || (GEOPage.isGSEPage())) {
 				citationlabel = 'Cite Series';
 			}
-			else if (Page.isPubMed()) {
+			else if (PubMedPage.isPubMed()) {
 				citationlabel = 'PubMed Citation';
 			}
 			self.addButtons($elem, iconURL, citationlabel);
@@ -121,18 +123,18 @@ var Interface = {
 			evt.preventDefault();
 			var $evtTarget = $(evt.target),
 				format = ScreenScraper.getCitationFormat($evtTarget);
-			if ((Type.isDataSet($evtTarget)) || (Page.isGDSBrowserPage()) || (Type.isSeries($evtTarget)) || (Page.isGSEPage())) {
+			if ((Type.isDataSet($evtTarget)) || (GEOPage.isGDSBrowserPage()) || (Type.isSeries($evtTarget)) || (GEOPage.isGSEPage())) {
 				// If is related to citation for datasets or series
-				if ((Type.isDataSet($evtTarget)) || (Page.isGDSBrowserPage())) {
+				if ((Type.isDataSet($evtTarget)) || (GEOPage.isGDSBrowserPage())) {
 					var ID = ScreenScraper.getID($evtTarget);
 					PreAjax.getIntoGDSBrowserPage(format, ID, $evtTarget);
 				}
-				else if ((Type.isSeries($evtTarget)) || (Page.isGSEPage())) {
+				else if ((Type.isSeries($evtTarget)) || (GEOPage.isGSEPage())) {
 					var series = ScreenScraper.getSeries($evtTarget);
 					PreAjax.getIntoGSEPage(format, series, $evtTarget);
 				}
 			}
-			else if (Page.isPubMed()) {
+			else if (PubMedPage.isPubMed()) {
 				// Else if is related to citation for PubMed articles
 				var PubMedID = ScreenScraper.getPubMedID($evtTarget);
 				PreAjax.getIntoAbstractPage(format, PubMedID, $evtTarget);
@@ -141,7 +143,7 @@ var Interface = {
 	},
 
 	addButtons: function($elem, iconURL, citationlabel) {
-		if (Page.isGDSBrowserPage()) {
+		if (GEOPage.isGDSBrowserPage()) {
 			$elem.after('<div class="citationstuff"><img alt="Citation Icon" src="'+iconURL+'" width="15" height="15"><b class="citationlabel">'+citationlabel+'</b><button class="citationbutton" id="ris">RIS (.ris)</button><button class="citationbutton" id="bib">BibTeX (.bib)</button><button class="citationbutton" id="enw">EndNote (.enw)</button></div>');			
 		}
 		else {
@@ -161,10 +163,10 @@ var ScreenScraper = {
 	// Gets ID number of dataset (from search results or GDS browser page)
 	getID: function($evtTarget) {
 		var ID;
-		if (Page.isDatasetSearchResultsPage()) {
+		if (GEOPage.isGEOSearchResultsPage()) {
 			ID = $evtTarget.parent().parent().find('.rprtid').eq(1).find('dd').text();
 		}
-		else if (Page.isGDSBrowserPage()) {
+		else if (GEOPage.isGDSBrowserPage()) {
 			ID = $evtTarget.parent().parent().find('.caption').find('th').text().slice(39,43);
 		}
 		return ID;
@@ -173,10 +175,10 @@ var ScreenScraper = {
 	// Gets series (from search results or GSE page)
 	getSeries: function($evtTarget) {
 		var series;
-		if (Page.isDatasetSearchResultsPage()) {
+		if (GEOPage.isGEOSearchResultsPage()) {
 			series = $evtTarget.parent().parent().find('.rprtid').eq(0).find('dd').text();
 		}
-		else if (Page.isGSEPage()) {
+		else if (GEOPage.isGSEPage()) {
 			series = $evtTarget.parent().parent().parent().parent().find('tr').eq(0).find('strong').attr('id');
 		}
 		return series;
@@ -185,10 +187,10 @@ var ScreenScraper = {
 	// Gets PubMedID of PubMed article (from search results or abstract page)
 	getPubMedID: function($evtTarget) {
 		var PubMedID;
-		if (Page.isPubMedSearchResultsPage()) {
+		if (PubMedPage.isPubMedSearchResultsPage()) {
 			PubMedID = $evtTarget.parent().parent().find('dd').text();
 		}
-		else if (Page.isPubMedAbstractPage()) {
+		else if (PubMedPage.isPubMedAbstractPage()) {
 			PubMedID = $evtTarget.parent().parent().parent().find('dd').eq(0).text();
 		}
 		return PubMedID;
@@ -197,13 +199,13 @@ var ScreenScraper = {
 	////////// ALL THINGS RELATED TO GETTING INFO WITHIN AJAX CALL //////////
 	getTitle: function($data, $evtTarget) {
 		var title;
-		if ((Type.isDataSet($evtTarget)) || (Page.isGDSBrowserPage())) {
+		if ((Type.isDataSet($evtTarget)) || (GEOPage.isGDSBrowserPage())) {
 			title = $data.find('tbody').eq(1).find('tr').eq(1).find('td').eq(0).text();
 		}
-		else if ((Type.isSeries($evtTarget)) || (Page.isGSEPage())) {
+		else if ((Type.isSeries($evtTarget)) || (GEOPage.isGSEPage())) {
 			title = $data.find('tr').eq(19).find('td').eq(1).text();
 		}
-		else if (Page.isPubMed()) {
+		else if (PubMedPage.isPubMed()) {
 			title = $data.find('.rprt.abstract').find('h1').text();
 			title = title.slice(0,title.length-1); // Get rid of extra space at end of string
 		}
@@ -212,13 +214,13 @@ var ScreenScraper = {
 
 	getYear: function($data, $evtTarget) {
 		var year;
-		if ((Type.isDataSet($evtTarget)) || (Page.isGDSBrowserPage())) {
+		if ((Type.isDataSet($evtTarget)) || (GEOPage.isGDSBrowserPage())) {
 			year = $data.find('tbody').eq(1).find('tr').eq(7).find('td').eq(1).text().slice(0,4);
 		}
-		else if ((Type.isSeries($evtTarget)) || (Page.isGSEPage())) {
+		else if ((Type.isSeries($evtTarget)) || (GEOPage.isGSEPage())) {
 			year = $data.find('tr').eq(18).find('td').eq(1).text().slice(18,22);
 		}
-		else if (Page.isPubMed()) {
+		else if (PubMedPage.isPubMed()) {
 			var periodIndex = $data.find('.cit').text().indexOf('.');
 			year = $data.find('.cit').text().slice(periodIndex+2,periodIndex+6);
 		}
@@ -247,7 +249,7 @@ var ScreenScraper = {
 	getAuthorMatrix: function($data, $evtTarget, searchURL, format, ID, modifiedTitle, year, PubMedID, journal, abstract, DOI) {
 		var authors,
 		authorMatrix;	
-		if ((Type.isDataSet($evtTarget)) || (Page.isGDSBrowserPage())) {
+		if ((Type.isDataSet($evtTarget)) || (GEOPage.isGDSBrowserPage())) {
 			authors = $data.find('.authors').text();
 			authors = authors.slice(0,authors.length-2); // Get rid of extra space and punctuation at end of string
 			authors = authors.replace(/\s*,\s*/g, ','); // Get rid of spaces after commas
@@ -257,10 +259,10 @@ var ScreenScraper = {
 			}
 			return authorMatrix;
 		}
-		else if ((Type.isSeries($evtTarget)) || (Page.isGSEPage())) {
+		else if ((Type.isSeries($evtTarget)) || (GEOPage.isGSEPage())) {
 			PreAjax.getPubMedAuthors($evtTarget, format, ID, modifiedTitle, year, PubMedID, journal, abstract, DOI, searchURL);
 		}
-		else if (Page.isPubMed()) {
+		else if (PubMedPage.isPubMed()) {
 			authors = $data.find('.auths').text();
 			authors = authors.slice(0,authors.length-1); // Get rid of punctuation at end of string
 			authors = authors.replace(/\s*,\s*/g, ','); // Get rid of spaces after commas
@@ -461,12 +463,12 @@ var CitationFile = {
 var CitationText = {
 	makeRIScitation: function($evtTarget, searchURL, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI) {
 		var citationbody;
-		if ((Type.isDataSet($evtTarget)) || (Page.isGDSBrowserPage()) || (Type.isSeries($evtTarget)) || (Page.isGSEPage())) {
+		if ((Type.isDataSet($evtTarget)) || (GEOPage.isGDSBrowserPage()) || (Type.isSeries($evtTarget)) || (GEOPage.isGSEPage())) {
 		// If is related to citation for datasets or series
 			citationbody = 'TY  - DATA\n';
 			citationbody = citationbody + 'DP  - National Center for Biotechnology Information, U.S. National Library of Medicine Gene Expression Omnibus (GEO) Datasets\n';
 		}
-		else if (Page.isPubMed()) {
+		else if (PubMedPage.isPubMed()) {
 		// Else if is related to citation for PubMed articles
 			citationbody = 'TY  - JOUR\n';
 			citationbody = citationbody + 'JO  - ' + journal + '\n';
@@ -504,12 +506,12 @@ var CitationText = {
 
 	makeBibTeXcitation: function($evtTarget, searchURL, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI) {
 		var citationbody;
-		if ((Type.isDataSet($evtTarget)) || (Page.isGDSBrowserPage()) || (Type.isSeries($evtTarget)) || (Page.isGSEPage())) {
+		if ((Type.isDataSet($evtTarget)) || (GEOPage.isGDSBrowserPage()) || (Type.isSeries($evtTarget)) || (GEOPage.isGSEPage())) {
 		// If is related to citation for datasets or series
 			citationbody = '@techreport{' + authorMatrix[0].split(', ')[0] + '_' + year + ',\n'; // What kind of "entry" type?
 			citationbody = citationbody + 'note = {National Center for Biotechnology Information, U.S. National Library of Medicine Gene Expression Omnibus (GEO) Datasets},\n';
 		}
-		else if (Page.isPubMed()) {
+		else if (PubMedPage.isPubMed()) {
 		// Else if is related to citation for PubMed articles
 			citationbody = '@article{' + authorMatrix[0].split(', ')[0] + '_' + year + ',\n';
 			citationbody = citationbody + 'journal = {' + journal + '},\n';
@@ -538,12 +540,12 @@ var CitationText = {
 
 	makeEndNotecitation: function($evtTarget, searchURL, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI) {
 		var citationbody;
-		if ((Type.isDataSet($evtTarget)) || (Page.isGDSBrowserPage()) || (Type.isSeries($evtTarget)) || (Page.isGSEPage())) {
+		if ((Type.isDataSet($evtTarget)) || (GEOPage.isGDSBrowserPage()) || (Type.isSeries($evtTarget)) || (GEOPage.isGSEPage())) {
 		// If is related to citation for datasets or series
 			citationbody = '%0 Dataset\n';
 			citationbody = citationbody + '%W ' + 'National Center for Biotechnology Information, U.S. National Library of Medicine Gene Expression Omnibus (GEO) Datasets\n';
 		}
-		else if (Page.isPubMed()) {
+		else if (PubMedPage.isPubMed()) {
 		// Else if is related to citation for PubMed articles
 			citationbody = '%0 Journal Article\n';
 			citationbody = citationbody + '%J ' + journal + '\n';

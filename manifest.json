@@ -18,13 +18,17 @@
 	"content_scripts": [
 		{
 			"matches": [
-				"http://www.ncbi.nlm.nih.gov/*"
+				"http://www.ncbi.nlm.nih.gov/*",
+				"https://datamed.org/*"
 			],
 			"css": [
 				"button.css"
 			],
 			"js": [
-				"underscore-min.js", "jquery.js", "summarizer.js", "out.js"
+				"underscore-min.js",
+				"jquery.js",
+				"summarizer.js",
+				"out.js"
 			]
 		}
 	],
