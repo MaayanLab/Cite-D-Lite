@@ -1,4 +1,4 @@
-var Type = {
+var GEOType = {
 	// Return true if result on search results page is a dataset, false otherwise.
 	isDataSet: function($object) { // $object is either $evtTarget or $elem
 		if (GEOPage.isGEOSearchResultsPage()) {

@@ -45,10 +45,10 @@ var ScreenScraper = {
 	////////// ALL THINGS RELATED TO GETTING INFO WITHIN AJAX CALL //////////
 	getTitle: function($data, $evtTarget) {
 		var title;
-		if ((Type.isDataSet($evtTarget)) || (GEOPage.isGDSBrowserPage())) {
+		if ((GEOType.isDataSet($evtTarget)) || (GEOPage.isGDSBrowserPage())) {
 			title = $data.find('tbody').eq(1).find('tr').eq(1).find('td').eq(0).text();
 		}
-		else if ((Type.isSeries($evtTarget)) || (GEOPage.isGSEPage())) {
+		else if ((GEOType.isSeries($evtTarget)) || (GEOPage.isGSEPage())) {
 			title = $data.find('tr').eq(19).find('td').eq(1).text();
 		}
 		else if (PubMedPage.isPubMed()) {
@@ -60,10 +60,10 @@ var ScreenScraper = {
 
 	getYear: function($data, $evtTarget) {
 		var year;
-		if ((Type.isDataSet($evtTarget)) || (GEOPage.isGDSBrowserPage())) {
+		if ((GEOType.isDataSet($evtTarget)) || (GEOPage.isGDSBrowserPage())) {
 			year = $data.find('tbody').eq(1).find('tr').eq(7).find('td').eq(1).text().slice(0,4);
 		}
-		else if ((Type.isSeries($evtTarget)) || (GEOPage.isGSEPage())) {
+		else if ((GEOType.isSeries($evtTarget)) || (GEOPage.isGSEPage())) {
 			year = $data.find('tr').eq(18).find('td').eq(1).text().slice(18,22);
 		}
 		else if (PubMedPage.isPubMed()) {
@@ -95,7 +95,7 @@ var ScreenScraper = {
 	getAuthorMatrix: function($data, $evtTarget, searchURL, format, ID, modifiedTitle, year, PubMedID, journal, abstract, DOI) {
 		var authors,
 		authorMatrix;	
-		if ((Type.isDataSet($evtTarget)) || (GEOPage.isGDSBrowserPage())) {
+		if ((GEOType.isDataSet($evtTarget)) || (GEOPage.isGDSBrowserPage())) {
 			authors = $data.find('.authors').text();
 			authors = authors.slice(0,authors.length-2); // Get rid of extra space and punctuation at end of string
 			authors = authors.replace(/\s*,\s*/g, ','); // Get rid of spaces after commas
@@ -105,7 +105,7 @@ var ScreenScraper = {
 			}
 			return authorMatrix;
 		}
-		else if ((Type.isSeries($evtTarget)) || (GEOPage.isGSEPage())) {
+		else if ((GEOType.isSeries($evtTarget)) || (GEOPage.isGSEPage())) {
 			PreAjax.getPubMedAuthors($evtTarget, format, ID, modifiedTitle, year, PubMedID, journal, abstract, DOI, searchURL);
 		}
 		else if (PubMedPage.isPubMed()) {
