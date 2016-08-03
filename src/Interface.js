@@ -32,24 +32,23 @@ var Interface = {
 		var self = this;
 		$parents.each(function(i, elem) {
 			var $elem = $(elem),
-				iconURL = chrome.extension.getURL("icon_128.png"),
 				citationlabel;
 			if ((GEOType.isDataSet($elem)) || (GEOPage.isGDSBrowserPage())) {
-				citationlabel = 'Cite GEO Dataset';
+				citationlabel = ' Cite GEO Dataset';
 			}
 			else if ((GEOType.isSeries($elem)) || (GEOPage.isGSEPage())) {
-				citationlabel = 'Cite GEO Series';
+				citationlabel = ' Cite GEO Series';
 			}
 			else if ((GEOType.isSample($elem)) || (GEOPage.isGSMPage())) {
-				citationlabel = 'Cite GEO Sample';
+				citationlabel = ' Cite GEO Sample';
 			}
 			else if (PubMedPage.isPubMed()) {
-				citationlabel = 'PubMed Citation';
+				citationlabel = ' PubMed Citation';
 			}
 			else if (DataMedType.isGEO()) {
-				citationlabel = 'Cite GEO Sample';
+				citationlabel = ' Cite GEO Sample';
 			}
-			self.addButtons($elem, iconURL, citationlabel);
+			self.addButtons($elem, citationlabel);
 		});
 	},
 
@@ -80,8 +79,9 @@ var Interface = {
 		});
 	},
 
-	addButtons: function($elem, iconURL, citationlabel) {
-		var buttonHTMLdiv = '<div class="citationstuff"><img alt="Citation Icon" src="'+iconURL+'" width="15" height="15"><b class="citationlabel">'+citationlabel+'</b><button class="citationbutton" id="ris">RIS (.ris)</button><button class="citationbutton" id="bib">BibTeX (.bib)</button><button class="citationbutton" id="enw">EndNote (.enw)</button></div>';
+	addButtons: function($elem, citationlabel) {
+		var iconURL = chrome.extension.getURL("icon_720.png"),
+			buttonHTMLdiv = '<div class="citationstuff"><img alt="Citation Icon" src="'+iconURL+'" width="15" height="15"><b class="citationlabel">'+citationlabel+'</b><button class="citationbutton" id="ris">RIS (.ris)</button><button class="citationbutton" id="bib">BibTeX (.bib)</button><button class="citationbutton" id="enw">EndNote (.enw)</button></div>';
 		if (GEOPage.isGDSBrowserPage()) {
 			$elem.after(buttonHTMLdiv);
 		}

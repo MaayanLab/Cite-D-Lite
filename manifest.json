@@ -4,11 +4,12 @@
 	"description": "Ma'ayan Lab",
 	
 	"icons":{
-		"128": "icon_128.png"
+		"128": "icon_128.png",
+		"720": "icon_720.png"
 	},
 	
 	"browser_action": {
-		"default_icon": "icon_128.png"
+		"default_icon": "icon_720.png"
 	},
 	
 	"permissions": [
@@ -34,7 +35,8 @@
 	],
 	
 	"web_accessible_resources": [
-		"icon_128.png"
+		"icon_128.png",
+		"icon_720.png"
 	],
 
 	"manifest_version": 2
