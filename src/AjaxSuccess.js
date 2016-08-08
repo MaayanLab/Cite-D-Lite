@@ -37,7 +37,7 @@ var AjaxSuccess = {
 		CitationFile.assemble($evtTarget, searchURL, format, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
 	},
 
-	PubMedAuthorMatrix: function(pubmedCitation, $evtTarget, pubmedSearchURL, format, ID, modifiedTitle, year, journal, abstract, DOI, searchURL) {
+	GSEPubMedAuthorMatrix: function(pubmedCitation, $evtTarget, pubmedSearchURL, format, ID, modifiedTitle, year, journal, abstract, DOI, searchURL) {
 		var $pubmedCitation = $(pubmedCitation);
 			authors = $pubmedCitation.find('.authors').text();
 			authors = authors.slice(0,authors.length-1); // Get rid of extra space at end of string
@@ -46,6 +46,20 @@ var AjaxSuccess = {
 			for (i=0; i<authorMatrix.length; i++) { // Insert comma between last & first name
 				authorMatrix[i] = authorMatrix[i].replace(' ',', ');
 			}
+		CitationFile.assemble($evtTarget, searchURL, format, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
+	},
+
+	GSMPage: function(data, $evtTarget, searchURL, format, sample) {
+		var $data = $(data),
+			ID = '', // EMPTY
+			title = ScreenScraper.getTitle($data, $evtTarget),
+			modifiedTitle = sample + ': ' + title,
+			year = ScreenScraper.getYear($data, $evtTarget),
+			PubMedID = '', // EMPTY
+			journal = '', // EMPTY
+			abstract = '', // EMPTY
+			DOI = '', // EMPTY
+			authorMatrix = ScreenScraper.getAuthorMatrix($data, $evtTarget, searchURL, format, ID, modifiedTitle, year, PubMedID, journal, abstract, DOI);
 		CitationFile.assemble($evtTarget, searchURL, format, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
 	}
 };

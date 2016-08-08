@@ -41,16 +41,30 @@ var AjaxCall = {
 		});
 	},
 
-	PubMedAuthorMatrix: function($evtTarget, pubmedSearchURL, format, ID, modifiedTitle, year, journal, abstract, DOI, searchURL) {
+	GSEPubMedAuthorMatrix: function($evtTarget, pubmedSearchURL, format, ID, modifiedTitle, year, journal, abstract, DOI, searchURL) {
 		$.ajax({
 			url: pubmedSearchURL,
 			type: 'GET',
 			dataType: '',
 			success: function(pubmedCitation) {
-				AjaxSuccess.PubMedAuthorMatrix(pubmedCitation, $evtTarget, pubmedSearchURL, format, ID, modifiedTitle, year, journal, abstract, DOI, searchURL);
+				AjaxSuccess.GSEPubMedAuthorMatrix(pubmedCitation, $evtTarget, pubmedSearchURL, format, ID, modifiedTitle, year, journal, abstract, DOI, searchURL);
 			},
 			error: function () {
 				alert('Sorry, no citation available.');
+			}
+		});
+	},
+
+	GSMPage: function(format, sample, $evtTarget, searchURL) {
+		$.ajax({
+			url: searchURL,
+			type: 'GET',
+			dataType: '',
+			success: function(data) {
+				AjaxSuccess.GSMPage(data, $evtTarget, searchURL, format, sample);
+			},
+			error: function() {
+				alert('Sorry, something went wrong.');
 			}
 		});
 	}

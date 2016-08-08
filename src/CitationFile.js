@@ -1,5 +1,11 @@
 ////////// ALL THINGS RELATED TO PUTTING THE CITATION TOGETHER //////////
 var CitationFile = {
+	assemble: function($evtTarget, searchURL, format, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI) {
+		var filename = this.fileName(format, modifiedTitle),
+			citationbody = this.citationBody($evtTarget, searchURL, format, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
+		this.download(filename, citationbody);
+	},
+	
 	fileName: function(format, modifiedTitle) {
 		var filename;
 		if (format === 'ris') {
@@ -26,12 +32,6 @@ var CitationFile = {
 			citationbody = CitationText.makeEndNotecitation($evtTarget, searchURL, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
 		}
 		return citationbody;
-	},
-
-	assemble: function($evtTarget, searchURL, format, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI) {
-		var filename = this.fileName(format, modifiedTitle),
-			citationbody = this.citationBody($evtTarget, searchURL, format, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
-		this.download(filename, citationbody);
 	},
 
 	// Downloads text file, bypasses server

@@ -39,14 +39,11 @@ var Interface = {
 			else if ((GEOType.isSeries($elem)) || (GEOPage.isGSEPage())) {
 				citationlabel = ' Cite GEO Series';
 			}
-			else if ((GEOType.isSample($elem)) || (GEOPage.isGSMPage())) {
+			else if ((GEOType.isSample($elem)) || (GEOPage.isGSMPage()) || (DataMedType.isGEO())) {
 				citationlabel = ' Cite GEO Sample';
 			}
 			else if (PubMedPage.isPubMed()) {
 				citationlabel = ' PubMed Citation';
-			}
-			else if (DataMedType.isGEO()) {
-				citationlabel = ' Cite GEO Sample';
 			}
 			self.addButtons($elem, citationlabel);
 		});
@@ -73,8 +70,9 @@ var Interface = {
 				var PubMedID = ScreenScraper.getPubMedID($evtTarget);
 				PreAjax.getIntoAbstractPage(format, PubMedID, $evtTarget);
 			}
-			else if (DataMedPage.isDataMed()) {
-				alert('hi');
+			else if ((GEOType.isSample($evtTarget)) || (GEOPage.isGSMPage()) || (DataMedType.isGEO())) {
+				var sample = ScreenScraper.getSample($evtTarget);
+				PreAjax.getIntoGSMPage(format, sample, $evtTarget);
 			}
 		});
 	},

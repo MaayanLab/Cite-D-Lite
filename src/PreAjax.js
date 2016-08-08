@@ -17,9 +17,15 @@ var PreAjax = {
 		AjaxCall.AbstractPage(format, PubMedID, $evtTarget, searchURL);
 	},
 
-	getPubMedAuthors: function($evtTarget, format, ID, modifiedTitle, year, PubMedID, journal, abstract, DOI, searchURL) {
+	getGSEPubMedAuthors: function($evtTarget, format, ID, modifiedTitle, year, PubMedID, journal, abstract, DOI, searchURL) {
 		var pubmedBaseURL = 'http://www.ncbi.nlm.nih.gov/sites/PubmedCitation?id=',
 			pubmedSearchURL = pubmedBaseURL + PubMedID;
-		AjaxCall.PubMedAuthorMatrix($evtTarget, pubmedSearchURL, format, ID, modifiedTitle, year, journal, abstract, DOI, searchURL);
+		AjaxCall.GSEPubMedAuthorMatrix($evtTarget, pubmedSearchURL, format, ID, modifiedTitle, year, journal, abstract, DOI, searchURL);
+	},
+
+	getIntoGSMPage: function(format, sample, $evtTarget) {
+		var baseURL = 'https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=',
+			searchURL = baseURL + sample;
+		AjaxCall.GSMPage(format, sample, $evtTarget, searchURL);
 	}
 };

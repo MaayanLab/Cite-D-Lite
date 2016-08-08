@@ -166,14 +166,11 @@ var Interface = {
 			else if ((GEOType.isSeries($elem)) || (GEOPage.isGSEPage())) {
 				citationlabel = ' Cite GEO Series';
 			}
-			else if ((GEOType.isSample($elem)) || (GEOPage.isGSMPage())) {
+			else if ((GEOType.isSample($elem)) || (GEOPage.isGSMPage()) || (DataMedType.isGEO())) {
 				citationlabel = ' Cite GEO Sample';
 			}
 			else if (PubMedPage.isPubMed()) {
 				citationlabel = ' PubMed Citation';
-			}
-			else if (DataMedType.isGEO()) {
-				citationlabel = ' Cite GEO Sample';
 			}
 			self.addButtons($elem, citationlabel);
 		});
@@ -200,8 +197,9 @@ var Interface = {
 				var PubMedID = ScreenScraper.getPubMedID($evtTarget);
 				PreAjax.getIntoAbstractPage(format, PubMedID, $evtTarget);
 			}
-			else if (DataMedPage.isDataMed()) {
-				alert('hi');
+			else if ((GEOType.isSample($evtTarget)) || (GEOPage.isGSMPage()) || (DataMedType.isGEO())) {
+				var sample = ScreenScraper.getSample($evtTarget);
+				PreAjax.getIntoGSMPage(format, sample, $evtTarget);
 			}
 		});
 	},
@@ -237,7 +235,7 @@ var ScreenScraper = {
 	// Gets ID number of dataset (from search results or GDS browser page)
 	getID: function($evtTarget) {
 		var ID;
-		if (GEOPage.isGEOSearchResultsPage()) {
+		if (GEOType.isDataSet($evtTarget)) {
 			ID = $evtTarget.parent().parent().find('.rprtid').eq(1).find('dd').text();
 		}
 		else if (GEOPage.isGDSBrowserPage()) {
@@ -249,7 +247,7 @@ var ScreenScraper = {
 	// Gets series (from search results or GSE page)
 	getSeries: function($evtTarget) {
 		var series;
-		if (GEOPage.isGEOSearchResultsPage()) {
+		if (GEOType.isSeries($evtTarget)) {
 			series = $evtTarget.parent().parent().find('.rprtid').eq(0).find('dd').text();
 		}
 		else if (GEOPage.isGSEPage()) {
@@ -270,18 +268,36 @@ var ScreenScraper = {
 		return PubMedID;
 	},
 
+	getSample: function($evtTarget) {
+		var sample;
+		if (GEOType.isSample($evtTarget)) {
+			sample = $evtTarget.parent().parent().find('.rprtid').eq(0).find('dd').text();
+		}
+		else if (GEOPage.isGSMPage()) {
+			sample = $evtTarget.parent().parent().parent().parent().find('tr').eq(0).find('strong').attr('id');
+		}
+		else if (DataMedType.isGEO()) {
+			if (DataMedPage.isDataMedSearchResultsPage()) {
+				sample = $evtTarget.parent().parent().find('.result-field').eq(0).find('span').text().trim();
+			}
+			else if (DataMedPage.isDataMedItemPage()) {
+				sample = $evtTarget.parent().parent().find('.panel-info').eq(0).find('tr').eq(1).find('td').eq(1).text();
+			}
+		}
+		return sample;
+	},
+
 	////////// ALL THINGS RELATED TO GETTING INFO WITHIN AJAX CALL //////////
 	getTitle: function($data, $evtTarget) {
 		var title;
 		if ((GEOType.isDataSet($evtTarget)) || (GEOPage.isGDSBrowserPage())) {
 			title = $data.find('tbody').eq(1).find('tr').eq(1).find('td').eq(0).text();
 		}
-		else if ((GEOType.isSeries($evtTarget)) || (GEOPage.isGSEPage())) {
+		else if ((GEOType.isSeries($evtTarget)) || (GEOPage.isGSEPage()) || (GEOType.isSample($evtTarget)) || (GEOPage.isGSMPage()) || DataMedType.isGEO()) {
 			title = $data.find('tr').eq(19).find('td').eq(1).text();
 		}
 		else if (PubMedPage.isPubMed()) {
-			title = $data.find('.rprt.abstract').find('h1').text();
-			title = title.slice(0,title.length-1); // Get rid of extra space at end of string
+			title = $data.find('.rprt.abstract').find('h1').text().trim();
 		}
 		return title;
 	},
@@ -291,7 +307,7 @@ var ScreenScraper = {
 		if ((GEOType.isDataSet($evtTarget)) || (GEOPage.isGDSBrowserPage())) {
 			year = $data.find('tbody').eq(1).find('tr').eq(7).find('td').eq(1).text().slice(0,4);
 		}
-		else if ((GEOType.isSeries($evtTarget)) || (GEOPage.isGSEPage())) {
+		else if ((GEOType.isSeries($evtTarget)) || (GEOPage.isGSEPage()) || (GEOType.isSample($evtTarget)) || (GEOPage.isGSMPage()) || DataMedType.isGEO()) {
 			year = $data.find('tr').eq(18).find('td').eq(1).text().slice(18,22);
 		}
 		else if (PubMedPage.isPubMed()) {
@@ -322,7 +338,7 @@ var ScreenScraper = {
 
 	getAuthorMatrix: function($data, $evtTarget, searchURL, format, ID, modifiedTitle, year, PubMedID, journal, abstract, DOI) {
 		var authors,
-		authorMatrix;	
+		authorMatrix = [];	
 		if ((GEOType.isDataSet($evtTarget)) || (GEOPage.isGDSBrowserPage())) {
 			authors = $data.find('.authors').text();
 			authors = authors.slice(0,authors.length-2); // Get rid of extra space and punctuation at end of string
@@ -334,7 +350,7 @@ var ScreenScraper = {
 			return authorMatrix;
 		}
 		else if ((GEOType.isSeries($evtTarget)) || (GEOPage.isGSEPage())) {
-			PreAjax.getPubMedAuthors($evtTarget, format, ID, modifiedTitle, year, PubMedID, journal, abstract, DOI, searchURL);
+			PreAjax.getGSEPubMedAuthors($evtTarget, format, ID, modifiedTitle, year, PubMedID, journal, abstract, DOI, searchURL);
 		}
 		else if (PubMedPage.isPubMed()) {
 			authors = $data.find('.auths').text();
@@ -345,6 +361,13 @@ var ScreenScraper = {
 				authorMatrix[i] = authorMatrix[i].replace(' ',', '); // Insert comma between last & first name
 				authorMatrix[i] = authorMatrix[i].slice(0,authorMatrix[i].length-1); // Get rid of number after name
 			}
+			return authorMatrix;
+		}
+		else if ((GEOType.isSample($evtTarget)) || (GEOPage.isGSMPage()) || DataMedType.isGEO()) {
+			var contactName = $data.find('tr').eq(39).find('td').eq(1).text();
+			var spaceIndex = contactName.indexOf(' ');
+			authors = contactName.slice(spaceIndex+1) + ', ' + contactName.slice(0,spaceIndex); // Rearrange to "Last, First"
+			authorMatrix[0] = authors;
 			return authorMatrix;
 		}
 	}
@@ -369,10 +392,16 @@ var PreAjax = {
 		AjaxCall.AbstractPage(format, PubMedID, $evtTarget, searchURL);
 	},
 
-	getPubMedAuthors: function($evtTarget, format, ID, modifiedTitle, year, PubMedID, journal, abstract, DOI, searchURL) {
+	getGSEPubMedAuthors: function($evtTarget, format, ID, modifiedTitle, year, PubMedID, journal, abstract, DOI, searchURL) {
 		var pubmedBaseURL = 'http://www.ncbi.nlm.nih.gov/sites/PubmedCitation?id=',
 			pubmedSearchURL = pubmedBaseURL + PubMedID;
-		AjaxCall.PubMedAuthorMatrix($evtTarget, pubmedSearchURL, format, ID, modifiedTitle, year, journal, abstract, DOI, searchURL);
+		AjaxCall.GSEPubMedAuthorMatrix($evtTarget, pubmedSearchURL, format, ID, modifiedTitle, year, journal, abstract, DOI, searchURL);
+	},
+
+	getIntoGSMPage: function(format, sample, $evtTarget) {
+		var baseURL = 'https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=',
+			searchURL = baseURL + sample;
+		AjaxCall.GSMPage(format, sample, $evtTarget, searchURL);
 	}
 };
 
@@ -419,16 +448,30 @@ var AjaxCall = {
 		});
 	},
 
-	PubMedAuthorMatrix: function($evtTarget, pubmedSearchURL, format, ID, modifiedTitle, year, journal, abstract, DOI, searchURL) {
+	GSEPubMedAuthorMatrix: function($evtTarget, pubmedSearchURL, format, ID, modifiedTitle, year, journal, abstract, DOI, searchURL) {
 		$.ajax({
 			url: pubmedSearchURL,
 			type: 'GET',
 			dataType: '',
 			success: function(pubmedCitation) {
-				AjaxSuccess.PubMedAuthorMatrix(pubmedCitation, $evtTarget, pubmedSearchURL, format, ID, modifiedTitle, year, journal, abstract, DOI, searchURL);
+				AjaxSuccess.GSEPubMedAuthorMatrix(pubmedCitation, $evtTarget, pubmedSearchURL, format, ID, modifiedTitle, year, journal, abstract, DOI, searchURL);
 			},
 			error: function () {
 				alert('Sorry, no citation available.');
+			}
+		});
+	},
+
+	GSMPage: function(format, sample, $evtTarget, searchURL) {
+		$.ajax({
+			url: searchURL,
+			type: 'GET',
+			dataType: '',
+			success: function(data) {
+				AjaxSuccess.GSMPage(data, $evtTarget, searchURL, format, sample);
+			},
+			error: function() {
+				alert('Sorry, something went wrong.');
 			}
 		});
 	}
@@ -473,7 +516,7 @@ var AjaxSuccess = {
 		CitationFile.assemble($evtTarget, searchURL, format, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
 	},
 
-	PubMedAuthorMatrix: function(pubmedCitation, $evtTarget, pubmedSearchURL, format, ID, modifiedTitle, year, journal, abstract, DOI, searchURL) {
+	GSEPubMedAuthorMatrix: function(pubmedCitation, $evtTarget, pubmedSearchURL, format, ID, modifiedTitle, year, journal, abstract, DOI, searchURL) {
 		var $pubmedCitation = $(pubmedCitation);
 			authors = $pubmedCitation.find('.authors').text();
 			authors = authors.slice(0,authors.length-1); // Get rid of extra space at end of string
@@ -483,11 +526,31 @@ var AjaxSuccess = {
 				authorMatrix[i] = authorMatrix[i].replace(' ',', ');
 			}
 		CitationFile.assemble($evtTarget, searchURL, format, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
+	},
+
+	GSMPage: function(data, $evtTarget, searchURL, format, sample) {
+		var $data = $(data),
+			ID = '', // EMPTY
+			title = ScreenScraper.getTitle($data, $evtTarget),
+			modifiedTitle = sample + ': ' + title,
+			year = ScreenScraper.getYear($data, $evtTarget),
+			PubMedID = '', // EMPTY
+			journal = '', // EMPTY
+			abstract = '', // EMPTY
+			DOI = '', // EMPTY
+			authorMatrix = ScreenScraper.getAuthorMatrix($data, $evtTarget, searchURL, format, ID, modifiedTitle, year, PubMedID, journal, abstract, DOI);
+		CitationFile.assemble($evtTarget, searchURL, format, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
 	}
 };
 
 ////////// ALL THINGS RELATED TO PUTTING THE CITATION TOGETHER //////////
 var CitationFile = {
+	assemble: function($evtTarget, searchURL, format, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI) {
+		var filename = this.fileName(format, modifiedTitle),
+			citationbody = this.citationBody($evtTarget, searchURL, format, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
+		this.download(filename, citationbody);
+	},
+	
 	fileName: function(format, modifiedTitle) {
 		var filename;
 		if (format === 'ris') {
@@ -516,12 +579,6 @@ var CitationFile = {
 		return citationbody;
 	},
 
-	assemble: function($evtTarget, searchURL, format, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI) {
-		var filename = this.fileName(format, modifiedTitle),
-			citationbody = this.citationBody($evtTarget, searchURL, format, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI);
-		this.download(filename, citationbody);
-	},
-
 	// Downloads text file, bypasses server
 	download: function(filename, text) {
 		var element = document.createElement('a');
@@ -537,10 +594,10 @@ var CitationFile = {
 var CitationText = {
 	makeRIScitation: function($evtTarget, searchURL, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI) {
 		var citationbody;
-		if ((GEOType.isDataSet($evtTarget)) || (GEOPage.isGDSBrowserPage()) || (GEOType.isSeries($evtTarget)) || (GEOPage.isGSEPage())) {
+		if ((GEOType.isDataSet($evtTarget)) || (GEOPage.isGDSBrowserPage()) || (GEOType.isSeries($evtTarget)) || (GEOPage.isGSEPage()) || (GEOType.isSample($evtTarget)) || (GEOPage.isGSMPage()) || DataMedType.isGEO()) {
 		// If is related to citation for datasets or series
 			citationbody = 'TY  - DATA\n';
-			citationbody = citationbody + 'DP  - National Center for Biotechnology Information, U.S. National Library of Medicine Gene Expression Omnibus (GEO) Datasets\n';
+			citationbody = citationbody + 'DP  - National Center for Biotechnology Information, U.S. National Library of Medicine Gene Expression Omnibus (GEO)\n';
 		}
 		else if (PubMedPage.isPubMed()) {
 		// Else if is related to citation for PubMed articles
@@ -580,10 +637,10 @@ var CitationText = {
 
 	makeBibTeXcitation: function($evtTarget, searchURL, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI) {
 		var citationbody;
-		if ((GEOType.isDataSet($evtTarget)) || (GEOPage.isGDSBrowserPage()) || (GEOType.isSeries($evtTarget)) || (GEOPage.isGSEPage())) {
+		if ((GEOType.isDataSet($evtTarget)) || (GEOPage.isGDSBrowserPage()) || (GEOType.isSeries($evtTarget)) || (GEOPage.isGSEPage()) || (GEOType.isSample($evtTarget)) || (GEOPage.isGSMPage()) || DataMedType.isGEO()) {
 		// If is related to citation for datasets or series
 			citationbody = '@techreport{' + authorMatrix[0].split(', ')[0] + '_' + year + ',\n'; // What kind of "entry" type?
-			citationbody = citationbody + 'note = {National Center for Biotechnology Information, U.S. National Library of Medicine Gene Expression Omnibus (GEO) Datasets},\n';
+			citationbody = citationbody + 'note = {National Center for Biotechnology Information, U.S. National Library of Medicine Gene Expression Omnibus (GEO)},\n';
 		}
 		else if (PubMedPage.isPubMed()) {
 		// Else if is related to citation for PubMed articles
@@ -614,10 +671,10 @@ var CitationText = {
 
 	makeEndNotecitation: function($evtTarget, searchURL, ID, modifiedTitle, authorMatrix, year, journal, abstract, DOI) {
 		var citationbody;
-		if ((GEOType.isDataSet($evtTarget)) || (GEOPage.isGDSBrowserPage()) || (GEOType.isSeries($evtTarget)) || (GEOPage.isGSEPage())) {
+		if ((GEOType.isDataSet($evtTarget)) || (GEOPage.isGDSBrowserPage()) || (GEOType.isSeries($evtTarget)) || (GEOPage.isGSEPage()) || (GEOType.isSample($evtTarget)) || (GEOPage.isGSMPage()) || DataMedType.isGEO()) {
 		// If is related to citation for datasets or series
 			citationbody = '%0 Dataset\n';
-			citationbody = citationbody + '%W ' + 'National Center for Biotechnology Information, U.S. National Library of Medicine Gene Expression Omnibus (GEO) Datasets\n';
+			citationbody = citationbody + '%W ' + 'National Center for Biotechnology Information, U.S. National Library of Medicine Gene Expression Omnibus (GEO)\n';
 		}
 		else if (PubMedPage.isPubMed()) {
 		// Else if is related to citation for PubMed articles
