@@ -770,7 +770,7 @@ var Abstract = {
 	},
 
 	createColor: function(zScore) {
-		unitScore_0to1 = this.zScore_0to1(zScore);
+		// unitScore_0to1 = this.zScore_0to1(zScore);
 		unitScore_1to0 = this.zScore_1to0(zScore);
 		// Hexadecimal red to yellow
 		// return ('#'+Math.floor(0xf * (Math.min(0.5, -zScore / 4.0) + 0.5)).toString(16))+(Math.floor(0xf * (Math.min(0.5, -zScore / 4.0) + 0.5)).toString(16))+(Math.floor(0xf * (Math.min(0.5, zScore / 4.0) + 0.5)).toString(16));
@@ -782,7 +782,12 @@ var Abstract = {
 		// return ('rgba(' + Math.floor(255*unitScore_1to0) + ',0,' + Math.floor(255*unitScore_0to1) + ',0.5)');
 
 		// RGB red to white
-		return ('rgb(255,' + Math.floor(255*unitScore_1to0) + ',' + Math.floor(255*unitScore_1to0) + ')');
+		if (isNaN(unitScore_1to0)) {
+			return ('rgb(255,0,0)'); // red
+		}
+		else {
+			return ('rgb(255,' + Math.floor(255*unitScore_1to0) + ',' + Math.floor(255*unitScore_1to0) + ')'); // somewhere between red & white
+		}
 	},
 
 	average: function(data) {
