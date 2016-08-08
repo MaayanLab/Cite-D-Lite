@@ -62,13 +62,18 @@ var CitationText = {
 		citationbody = citationbody + 'title = {' + modifiedTitle + '},\n';
 		citationbody = citationbody + 'year = {' + year + '},\n';
 		citationbody = citationbody + 'author = {';
-		for (i=0; i<authorMatrix.length; i++) { // Formatting authors
-			var last_first = authorMatrix[i].split(' ');
-			if (i === authorMatrix.length-1) {
-				citationbody = citationbody + last_first[0] + ' ' + last_first[1] + '},\n';
-			}
-			else {
-				citationbody = citationbody + last_first[0] + ' ' + last_first[1] + ' and ';
+		if ((GEOType.isSample($evtTarget)) || (GEOPage.isGSMPage()) || DataMedType.isGEO()) {
+			citationbody = citationbody + authorMatrix + '},\n';
+		}
+		else {
+			for (i=0; i<authorMatrix.length; i++) { // Formatting authors
+				var last_first = authorMatrix[i].split(' ');
+				if (i === authorMatrix.length-1) {
+					citationbody = citationbody + last_first[0] + ' ' + last_first[1] + '},\n';
+				}
+				else {
+					citationbody = citationbody + last_first[0] + ' ' + last_first[1] + ' and ';
+				}
 			}
 		}
 		citationbody = citationbody + 'url = {' + searchURL +'},\n';

@@ -364,8 +364,8 @@ var ScreenScraper = {
 			return authorMatrix;
 		}
 		else if ((GEOType.isSample($evtTarget)) || (GEOPage.isGSMPage()) || DataMedType.isGEO()) {
-			var contactName = $data.find('tr').eq(39).find('td').eq(1).text();
-			var spaceIndex = contactName.indexOf(' ');
+			var contactName = $data.find('tr').eq(39).find('td').eq(1).text();debugger;
+			var spaceIndex = contactName.lastIndexOf(' ');
 			authors = contactName.slice(spaceIndex+1) + ', ' + contactName.slice(0,spaceIndex); // Rearrange to "Last, First"
 			authorMatrix[0] = authors;
 			return authorMatrix;
@@ -655,13 +655,18 @@ var CitationText = {
 		citationbody = citationbody + 'title = {' + modifiedTitle + '},\n';
 		citationbody = citationbody + 'year = {' + year + '},\n';
 		citationbody = citationbody + 'author = {';
-		for (i=0; i<authorMatrix.length; i++) { // Formatting authors
-			var last_first = authorMatrix[i].split(' ');
-			if (i === authorMatrix.length-1) {
-				citationbody = citationbody + last_first[0] + ' ' + last_first[1] + '},\n';
-			}
-			else {
-				citationbody = citationbody + last_first[0] + ' ' + last_first[1] + ' and ';
+		if ((GEOType.isSample($evtTarget)) || (GEOPage.isGSMPage()) || DataMedType.isGEO()) {
+			citationbody = citationbody + authorMatrix + '},\n';
+		}
+		else {
+			for (i=0; i<authorMatrix.length; i++) { // Formatting authors
+				var last_first = authorMatrix[i].split(' ');
+				if (i === authorMatrix.length-1) {
+					citationbody = citationbody + last_first[0] + ' ' + last_first[1] + '},\n';
+				}
+				else {
+					citationbody = citationbody + last_first[0] + ' ' + last_first[1] + ' and ';
+				}
 			}
 		}
 		citationbody = citationbody + 'url = {' + searchURL +'},\n';

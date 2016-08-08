@@ -138,8 +138,8 @@ var ScreenScraper = {
 			return authorMatrix;
 		}
 		else if ((GEOType.isSample($evtTarget)) || (GEOPage.isGSMPage()) || DataMedType.isGEO()) {
-			var contactName = $data.find('tr').eq(39).find('td').eq(1).text();
-			var spaceIndex = contactName.indexOf(' ');
+			var contactName = $data.find('tr').eq(39).find('td').eq(1).text();debugger;
+			var spaceIndex = contactName.lastIndexOf(' ');
 			authors = contactName.slice(spaceIndex+1) + ', ' + contactName.slice(0,spaceIndex); // Rearrange to "Last, First"
 			authorMatrix[0] = authors;
 			return authorMatrix;
