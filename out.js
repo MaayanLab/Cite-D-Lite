@@ -108,7 +108,19 @@ var GEOType = {
 				return Boolean($object.parent().find('.src').text().match('Sample'));
 			}
 		}
-	}	
+	},
+
+	// Return true if result on search results page is a platform, false otherwise.
+	isPlatform: function($object) { // $object is either $evtTarget or $elem
+		if (GEOPage.isGEOSearchResultsPage()) {
+			if (Boolean($object.attr('class').match('citationbutton'))) { // $object is $evtTarget
+				return Boolean($object.parent().parent().find('.src').text().match('Platform'));
+			}
+			else { // $object is $elem
+				return Boolean($object.parent().find('.src').text().match('Platform'));
+			}
+		}
+	}
 };
 
 var DataMedType = {
@@ -172,7 +184,9 @@ var Interface = {
 			else if (PubMedPage.isPubMed()) {
 				citationlabel = ' PubMed Citation';
 			}
-			self.addButtons($elem, citationlabel);
+			if (!GEOType.isPlatform($elem)) {
+				self.addButtons($elem, citationlabel);
+			}
 		});
 	},
 
@@ -364,6 +378,7 @@ var ScreenScraper = {
 			return authorMatrix;
 		}
 		else if ((GEOType.isSample($evtTarget)) || (GEOPage.isGSMPage()) || DataMedType.isGEO()) {
+			debugger;
 			var contactName = document.evaluate('//td[text()="Contact name"]/../td[2]', $data[$data.length-1]).iterateNext().textContent;
 			var spaceIndex = contactName.lastIndexOf(' ');
 			authors = contactName.slice(spaceIndex+1) + ', ' + contactName.slice(0,spaceIndex); // Rearrange to "Last, First"

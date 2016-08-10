@@ -138,6 +138,7 @@ var ScreenScraper = {
 			return authorMatrix;
 		}
 		else if ((GEOType.isSample($evtTarget)) || (GEOPage.isGSMPage()) || DataMedType.isGEO()) {
+			debugger;
 			var contactName = document.evaluate('//td[text()="Contact name"]/../td[2]', $data[$data.length-1]).iterateNext().textContent;
 			var spaceIndex = contactName.lastIndexOf(' ');
 			authors = contactName.slice(spaceIndex+1) + ', ' + contactName.slice(0,spaceIndex); // Rearrange to "Last, First"

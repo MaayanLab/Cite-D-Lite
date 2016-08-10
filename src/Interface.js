@@ -45,7 +45,9 @@ var Interface = {
 			else if (PubMedPage.isPubMed()) {
 				citationlabel = ' PubMed Citation';
 			}
-			self.addButtons($elem, citationlabel);
+			if (!GEOType.isPlatform($elem)) {
+				self.addButtons($elem, citationlabel);
+			}
 		});
 	},
 
