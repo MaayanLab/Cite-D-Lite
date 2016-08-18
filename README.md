@@ -1,6 +1,6 @@
 # Cite-D-Lite
 
-Cite-D-Lite functions on specific pages of GEO, PubMed, and DataMed.
+Cite-D-Lite version 1.0 functions on specific pages of GEO, PubMed, and DataMed.
 It has two functions: (1) to create downloadable citations for GEO data and PubMed articles and (2) to highlight the most important sentences in PubMed abstracts in a graded manner (based on TextRank algorithm).
 
 Regarding citation generation for GEO data, it generates citations for GEO datasets, GEO series, and GEO samples found on GEO. It also generates citations for GEO samples found on DataMed in addition to generating citations for PubMed articles.
