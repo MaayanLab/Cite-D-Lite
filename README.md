@@ -6,6 +6,7 @@ It has two functions: (1) to create downloadable citations for GEO data and PubM
 Regarding citation generation for GEO data, it generates citations for GEO datasets, GEO series, and GEO samples found on GEO. It also generates citations for GEO samples found on DataMed in addition to generating citations for PubMed articles.
 
 Buttons to download these citations appear on 8 different types of pages:
+
 1. Only search result listings that are either datasets, series, or samples (not platform) on the GEO search result page.
 2. All GDS browser pages (which are GEO dataset-specific).
 3. All GSE pages (which are GEO series-specific).
