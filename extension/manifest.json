@@ -29,7 +29,7 @@
 				"underscore-min.js",
 				"jquery.js",
 				"summarizer.js",
-				"out.js"
+				"cite-d-lite.js"
 			]
 		}
 	],
