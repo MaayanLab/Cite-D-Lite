@@ -1,6 +1,6 @@
 {
 	"name": "Cite-D-Lite",
-	"version": "1.0",
+	"version": "1.0.1",
 	"description": "Ma'ayan Lab",
 	
 	"icons":{
@@ -19,7 +19,7 @@
 	"content_scripts": [
 		{
 			"matches": [
-				"http://www.ncbi.nlm.nih.gov/*",
+				"https://www.ncbi.nlm.nih.gov/*",
 				"https://datamed.org/*"
 			],
 			"css": [

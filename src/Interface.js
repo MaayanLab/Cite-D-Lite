@@ -23,7 +23,7 @@ var Interface = {
 			$parents = $('.heading');
 		}
 		else if (DataMedPage.isDataMedSearchResultsPage()) {
-			$parents = $('.search-result').find('li');
+			$parents = $("a:contains('GEO')").parent().parent().parent();
 		}
 		return $parents;
 	},

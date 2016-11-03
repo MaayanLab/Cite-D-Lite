@@ -162,7 +162,7 @@ var Interface = {
 			$parents = $('.heading');
 		}
 		else if (DataMedPage.isDataMedSearchResultsPage()) {
-			$parents = $('.search-result').find('li');
+			$parents = $("a:contains('GEO')").parent().parent().parent();
 		}
 		return $parents;
 	},
@@ -274,10 +274,10 @@ var ScreenScraper = {
 	getPubMedID: function($evtTarget) {
 		var PubMedID;
 		if (PubMedPage.isPubMedSearchResultsPage()) {
-			PubMedID = $evtTarget.parent().parent().find('dd').text();
+			PubMedID = $evtTarget.parent().parent().parent().find('dd').text();
 		}
 		else if (PubMedPage.isPubMedAbstractPage()) {
-			PubMedID = $evtTarget.parent().parent().parent().find('dd').eq(0).text();
+			PubMedID = $evtTarget.parent().parent().parent().parent().find('dd').first().text();
 		}
 		return PubMedID;
 	},
@@ -378,7 +378,7 @@ var ScreenScraper = {
 			return authorMatrix;
 		}
 		else if ((GEOType.isSample($evtTarget)) || (GEOPage.isGSMPage()) || DataMedType.isGEO()) {
-			debugger;
+			// debugger;
 			var contactName = document.evaluate('//td[text()="Contact name"]/../td[2]', $data[$data.length-1]).iterateNext().textContent;
 			var spaceIndex = contactName.lastIndexOf(' ');
 			authors = contactName.slice(spaceIndex+1) + ', ' + contactName.slice(0,spaceIndex); // Rearrange to "Last, First"
@@ -390,25 +390,25 @@ var ScreenScraper = {
 
 var PreAjax = {
 	getIntoGDSBrowserPage: function(format, ID, $evtTarget) {
-	var baseURL = 'http://www.ncbi.nlm.nih.gov/sites/GDSbrowser?acc=GDS',
+	var baseURL = 'https://www.ncbi.nlm.nih.gov/sites/GDSbrowser?acc=GDS',
 		searchURL = baseURL + ID;
 	AjaxCall.GDSBrowserPage(format, ID, $evtTarget, searchURL);
 	},
 
 	getIntoGSEPage: function(format, series, $evtTarget) {
-		var baseURL = 'http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=',
+		var baseURL = 'https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=',
 			searchURL = baseURL + series;
 		AjaxCall.GSEPage(format, series, $evtTarget, searchURL);
 	},
 
 	getIntoAbstractPage: function(format, PubMedID, $evtTarget) {
-		var baseURL = 'http://www.ncbi.nlm.nih.gov/pubmed/',
+		var baseURL = 'https://www.ncbi.nlm.nih.gov/pubmed/',
 			searchURL = baseURL + PubMedID;
 		AjaxCall.AbstractPage(format, PubMedID, $evtTarget, searchURL);
 	},
 
 	getGSEPubMedAuthors: function($evtTarget, format, ID, modifiedTitle, year, PubMedID, journal, abstract, DOI, searchURL) {
-		var pubmedBaseURL = 'http://www.ncbi.nlm.nih.gov/sites/PubmedCitation?id=',
+		var pubmedBaseURL = 'https://www.ncbi.nlm.nih.gov/sites/PubmedCitation?id=',
 			pubmedSearchURL = pubmedBaseURL + PubMedID;
 		AjaxCall.GSEPubMedAuthorMatrix($evtTarget, pubmedSearchURL, format, ID, modifiedTitle, year, journal, abstract, DOI, searchURL);
 	},
