@@ -6,16 +6,10 @@ var Abstract = {
 			"delta": 0.5
 		};
 
-		var abstracttext = document.getElementsByTagName('abstracttext');
-		if(abstracttext.length > 1) {
-			abstracttext = abstracttext[0].parentNode.parentNode;
-		}
-		else {
-			abstracttext = abstracttext[0];
-		}
+		var abstracttext = document.getElementsByClassName('abstr')[0].children[1];
 
-	    var inputToSummarize = $.trim(abstracttext.innerHTML);
-	    if (inputToSummarize.length !== 0) {
+		var inputToSummarize = $.trim(abstracttext.innerText);
+		if (inputToSummarize.length !== 0) {
 			// Invoke the summarizer algo.
 			var sentences = Summarizer.Utility.getSentences(inputToSummarize);
 			var graph = Summarizer.Utility.makeGraph(sentences);
